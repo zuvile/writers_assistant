@@ -5,7 +5,6 @@ import sys
 
 
 def main():
-    print("manager is running")
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'writers_assitant.settings')
     try:

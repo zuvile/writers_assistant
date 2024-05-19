@@ -2,7 +2,7 @@ services:
   web:
     build: .
     ports:
-      - "8000:5000"
+      - "8000:8000"
   es01:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
     container_name: es01
@@ -62,7 +62,12 @@ services:
       - data03:/usr/share/elasticsearch/data
     networks:
       - elastic
-
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.13.4
+    ports:
+      - "8010:5601"
+    networks:
+      - elastic
 volumes:
   data01:
     driver: local
