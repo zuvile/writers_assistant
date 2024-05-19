@@ -1,5 +1,5 @@
 """
-ASGI config for writers_assitant project.
+ASGI config for writers_assistant project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'writers_assitant.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'writers_assistant.settings')
 
 application = get_asgi_application()
