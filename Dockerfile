@@ -6,6 +6,4 @@ WORKDIR /app
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
-RUN chmod +x writers_assistant.sh
-
-ENTRYPOINT ["./writers_assistant.sh"]
+CMD ["python", "manage.py", "runserver"]
