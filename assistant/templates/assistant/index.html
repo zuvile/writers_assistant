@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>Welcome to Writer's Assistant!</h1>
+<p>This is a tool for processing your novels.</p>
+
+<p>Uploaded novels:</p>
+{% if novel_list %}
+<ul>
+    {% for novel in novel_list %}
+    <li><a href="{% url 'assistant:novel' novel.id %}">{{ novel.novel_name }}</a></li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No novels available.</p>
+{% endif %}
+
+</body>
+</html>
