@@ -1,7 +1,7 @@
 from .models import Novel
 from django.shortcuts import get_object_or_404, render
 from .forms import UploadFileForm
-from .upload_processor import handle_uploaded_file
+from .upload_processor import UploadProcessor
 from django.http import HttpResponseRedirect
 
 
@@ -23,7 +23,8 @@ def upload_novel(request):
     if request.method == "POST":
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
-            handle_uploaded_file(request.FILES["file"])
+            up = UploadProcessor()
+            up.handle_uploaded_file(form.data['title'], request.FILES["file"])
             return HttpResponseRedirect("success")
     else:
         form = UploadFileForm()
