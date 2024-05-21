@@ -73,7 +73,9 @@ WSGI_APPLICATION = 'writers_assistant.wsgi.application'
 
 ELASTICSEARCH_DSL={
     'default': {
-        'hosts': 'http://localhost:9200'
+        'hosts': ['http://es01:9200'],
+        'http_auth': ('elastic', 'password'),
+        'verify_certs': False,
     }
 }
 

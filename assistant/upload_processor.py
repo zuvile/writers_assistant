@@ -32,12 +32,11 @@ def process_paragraphs(paragraphs, novel_id):
             continue
         number, title = get_chapter(paragraph)
         if (number):
-            #paragraph is chapter headline
+            # paragraph is chapter headline
             # update last chapter
             if (current_chapter):
-                #bug here for last chapter
                 Chapter.objects.update_word_count(current_chapter.pk, chapter_word_count)
-            #create new chapter
+            # create new chapter
             chapter_word_count = 0
             current_chapter = Chapter.objects.create_chapter(novel_id, number, 0, title)
         else:
@@ -47,7 +46,7 @@ def process_paragraphs(paragraphs, novel_id):
             novel_word_count += word_count
             is_dialogue = dialogue(paragraph)
             Paragraph.objects.create_paragraph(is_dialogue, paragraph, novel_id)
-
+    # update final chapter and novel word counts
     Chapter.objects.update_word_count(current_chapter.pk, chapter_word_count)
     Novel.objects.update_word_count(novel_id, novel_word_count)
 
