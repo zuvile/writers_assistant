@@ -15,6 +15,7 @@ class NovelManager(models.Manager):
     def create_novel(self, title, author_id):
         author = get_object_or_404(Author, pk=author_id)
         novel = self.create(novel_name=title, upload_date=timezone.now(), author_id=author.pk)
+        return novel
 
 
 class Novel(models.Model):
@@ -28,3 +29,17 @@ class Novel(models.Model):
 
     def was_uploaded_recently(self):
         return self.upload_date >= timezone.now() - datetime.timedelta(days=1)
+
+
+class ParagraphManager(models.Manager):
+    def create_paragraph(self, is_dialogue, text, novel_id):
+        novel = get_object_or_404(Novel, pk=novel_id)
+        paragraph = self.create(novel_id=novel.pk, is_dialogue=is_dialogue, text=text)
+        return paragraph
+
+
+class Paragraph(models.Model):
+    is_dialogue = models.BooleanField(default=False)
+    text = models.TextField(blank=True)
+    novel = models.ForeignKey(Novel, on_delete=models.CASCADE)
+    objects = ParagraphManager()

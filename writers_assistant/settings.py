@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'assistant.apps.AssistantConfig',
+    'django_elasticsearch_dsl'
 ]
 
 MIDDLEWARE = [
@@ -70,6 +71,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'writers_assistant.wsgi.application'
 
+ELASTICSEARCH_DSL={
+    'default': {
+        'hosts': 'http://localhost:9200'
+    }
+}
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases

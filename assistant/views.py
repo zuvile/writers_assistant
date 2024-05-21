@@ -1,8 +1,9 @@
 from .models import Novel
 from django.shortcuts import get_object_or_404, render
 from .forms import UploadFileForm
-from .upload_processor import UploadProcessor
+from .upload_processor import handle_uploaded_file
 from django.http import HttpResponseRedirect
+import codecs
 
 
 def index(request):
@@ -23,8 +24,12 @@ def upload_novel(request):
     if request.method == "POST":
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
-            up = UploadProcessor()
-            up.handle_uploaded_file(form.data['title'], request.FILES["file"])
+            utf8_file = codecs.EncodedFile(request.FILES['file'],"utf-8")
+            result = handle_uploaded_file(form.data['title'], utf8_file)
+            if (result == -1):
+                return render(request,
+                              "assistant/upload.html",
+                              {"form": form, "error_message": "Wrong file format"})
             return HttpResponseRedirect("success")
     else:
         form = UploadFileForm()
