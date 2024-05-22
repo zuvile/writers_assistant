@@ -1,4 +1,7 @@
 BOOK TITLE
+PROLOGUE
+
+Some prologue text
 
 1. The beginning
 This is chapter one.

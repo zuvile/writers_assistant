@@ -5,6 +5,7 @@ from .upload_processor import process_paragraphs, get_chapter, get_real_word_cou
 from .models import Author
 from .models import Novel
 from .models import Chapter
+from .models import Paragraph
 
 
 class UploadProcessorTest(TestCase):
@@ -31,7 +32,7 @@ class UploadProcessorTest(TestCase):
         novel = Novel.objects.get(novel_name='Sample novel')
         process_paragraphs(self._paragraphs, novel.pk)
         chapters = Chapter.objects.all()
-        self.assertEquals(3, len(chapters))
+        self.assertEquals(4, len(chapters))
 
     def test_chapter_title(self):
         novel = Novel.objects.get(novel_name='Sample novel')
@@ -59,7 +60,7 @@ class UploadProcessorTest(TestCase):
         novel = Novel.objects.get(novel_name='Sample novel')
         process_paragraphs(self._paragraphs, novel.pk)
         novel.refresh_from_db()
-        self.assertEquals(21, novel.word_count)
+        self.assertEquals(25, novel.word_count)
 
     def test_number_in_middle_sentence_not_chapter_title(self):
         paragraph = "Something 223. and other"
@@ -73,5 +74,15 @@ class UploadProcessorTest(TestCase):
         chapter = Chapter.objects.get(title="This is the last chapter")
         self.assertEquals(8, chapter.word_count)
 
-    def tearDown(self):
-        os.environ['TEST_ENV'] = '0'
+    def test_prologue(self):
+        novel = Novel.objects.get(novel_name='Sample novel')
+        process_paragraphs(self._paragraphs, novel.pk)
+        chapter = Chapter.objects.get(number=-1)
+        self.assertEquals(6, chapter.word_count)
+
+    def test_chapter_paragraphs(self):
+        novel = Novel.objects.get(novel_name='Sample novel')
+        process_paragraphs(self._paragraphs, novel.pk)
+        chapter = Chapter.objects.get(title="The beginning")
+        paragraphs = Paragraph.objects.filter(chapter_id=chapter.pk)
+        self.assertEquals(2, len(paragraphs))

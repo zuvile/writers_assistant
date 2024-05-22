@@ -26,29 +26,31 @@ def process_paragraphs(paragraphs, novel_id):
     novel_word_count = 0
     current_chapter = False
 
+    #initial chapter. This could be a prologue or something else
+    current_chapter = Chapter.objects.create_chapter(novel_id, -1, 0, 'Prologue')
     for paragraph in paragraphs:
         # skip new line
         if (paragraph == '\n' or paragraph == ''):
             continue
         number, title = get_chapter(paragraph)
         if (number):
-            # paragraph is chapter headline
-            # update last chapter
-            if (current_chapter):
-                Chapter.objects.update_word_count(current_chapter.pk, chapter_word_count)
-            # create new chapter
-            chapter_word_count = 0
+            #update previous chapter
+
+            Chapter.objects.update_word_count(current_chapter.pk, chapter_word_count)
+            #create new chapter
             current_chapter = Chapter.objects.create_chapter(novel_id, number, 0, title)
+            chapter_word_count = 0
         else:
             #paragraph is normal
             word_count = get_real_word_count(paragraph.split(' '))
             chapter_word_count += word_count
             novel_word_count += word_count
             is_dialogue = dialogue(paragraph)
-            Paragraph.objects.create_paragraph(is_dialogue, paragraph, novel_id)
+            Paragraph.objects.create_paragraph(is_dialogue, paragraph, novel_id, current_chapter.pk)
     # update final chapter and novel word counts
     Chapter.objects.update_word_count(current_chapter.pk, chapter_word_count)
     Novel.objects.update_word_count(novel_id, novel_word_count)
+
 
 def get_chapter(paragraph):
     chapter_title = re.search('(^\d+).(.*)', paragraph)

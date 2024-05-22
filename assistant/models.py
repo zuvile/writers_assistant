@@ -40,9 +40,9 @@ class Novel(models.Model):
 
 
 class ParagraphManager(models.Manager):
-    def create_paragraph(self, is_dialogue, text, novel_id):
+    def create_paragraph(self, is_dialogue, text, novel_id, chapter_id):
         novel = get_object_or_404(Novel, pk=novel_id)
-        paragraph = self.create(novel_id=novel.pk, is_dialogue=is_dialogue, text=text)
+        paragraph = self.create(novel_id=novel.pk, is_dialogue=is_dialogue, text=text, chapter_id=chapter_id)
         return paragraph
 
 
