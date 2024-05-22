@@ -5,12 +5,10 @@ from .upload_processor import process_paragraphs, get_chapter, get_real_word_cou
 from .models import Author
 from .models import Novel
 from .models import Chapter
-import os
 
 
 class UploadProcessorTest(TestCase):
     def setUp(self):
-        os.environ['TEST_ENV'] = '1'
         author = Author.objects.create_author('Sample author')
         Novel.objects.create_novel('Sample novel', author.pk)
         f = open(os.path.join(os.getcwd(), "assistant", "samples", "book.txt"))

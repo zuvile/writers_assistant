@@ -25,7 +25,7 @@ class UploadProcessorTest(TestCase):
         expected = ['skaičius', 'skaičiaus', 'skaičiui', 'skaičių', 'skaičiumi', 'skaičiuje', 'skaičiau']
         self.assertEquals(decline('skaičius'), expected)
 
-    def test_decline_name(self):
+    def test_decline_names(self):
         expected = ['Klaudijus', 'Klaudijaus', 'Klaudijui', 'Klaudijų', 'Klaudijumi', 'Klaudijuje', 'Klaudijau']
         self.assertEquals(decline('Klaudijus'), expected)
 

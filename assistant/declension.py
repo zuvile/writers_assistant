@@ -1,8 +1,8 @@
 import re
 
 _cases = {
-    "vardininkas": "nominative",
-    "kilmininkas": "genitive",
+    "Vardininkas": "nominative",
+    "Kilmininkas": "genitive",
     "Naudininkas": "dative",
     "Galininkas": "accusative",
     "Įnagininkas": "instrumentative",

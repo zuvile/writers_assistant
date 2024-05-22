@@ -72,4 +72,5 @@ class Paragraph(models.Model):
     is_dialogue = models.BooleanField(default=False)
     text = models.TextField(blank=True)
     novel = models.ForeignKey(Novel, on_delete=models.CASCADE)
+    chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, null=True)
     objects = ParagraphManager()

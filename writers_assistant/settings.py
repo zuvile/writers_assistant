@@ -9,12 +9,14 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+import sys
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+#test env
+TESTING = len(sys.argv) > 1 and sys.argv[1] == 'test'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -38,8 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'assistant.apps.AssistantConfig',
-    'django_elasticsearch_dsl'
 ]
+
+if not TESTING:
+    INSTALLED_APPS.append('django_elasticsearch_dsl')
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -71,13 +75,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'writers_assistant.wsgi.application'
 
-ELASTICSEARCH_DSL={
-    'default': {
-        'hosts': ['http://es01:9200'],
-        'http_auth': ('elastic', 'password'),
-        'verify_certs': False,
+if not TESTING:
+    ELASTICSEARCH_DSL={
+        'default': {
+            'hosts': ['http://es01:9200'],
+            'http_auth': ('elastic', 'password'),
+            'verify_certs': False,
+        }
     }
-}
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
