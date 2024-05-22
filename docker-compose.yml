@@ -88,7 +88,6 @@ volumes:
     driver: local
   data03:
     driver: local
-
 networks:
   elastic:
     driver: bridge
