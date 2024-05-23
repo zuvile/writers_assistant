@@ -74,3 +74,7 @@ class Paragraph(models.Model):
     novel = models.ForeignKey(Novel, on_delete=models.CASCADE)
     chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, null=True)
     objects = ParagraphManager()
+
+class Character(models.Model):
+    name = models.TextField(max_length=300)
+    novels = models.ManyToManyField(Novel)

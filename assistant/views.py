@@ -1,7 +1,8 @@
 from .models import Novel
 from django.shortcuts import get_object_or_404, render
-from .forms import UploadFileForm
+from .forms import UploadFileForm, CharacterSearchForm
 from .upload_processor import handle_uploaded_file
+from .character_search import get_character_search_results
 from django.http import HttpResponseRedirect
 import codecs
 
@@ -36,4 +37,16 @@ def upload_novel(request):
     return render(request, "assistant/upload.html", {"form": form})
 
 
+def search(request):
+    if request.method == "POST":
+        form = CharacterSearchForm(request.POST)
+        if form.is_valid():
+            count, results = get_character_search_results(request.POST["name"], request.POST["novel"])
+
+            return render(request,
+                              "assistant/search_for_char.html",
+                              {"form": form, "count": count, "results": results})
+    else:
+        form = CharacterSearchForm()
+    return render(request, "assistant/search_for_char.html", {"form": form})
 

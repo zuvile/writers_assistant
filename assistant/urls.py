@@ -8,5 +8,6 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("novels/<int:novel_id>/", views.novel, name="novel"),
     path("upload", views.upload_novel, name="upload"),
-    path("success", views.success, name="success")
+    path("success", views.success, name="success"),
+    path("search", views.search, name="search")
 ]

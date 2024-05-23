@@ -24,7 +24,6 @@ def handle_uploaded_file(title, file):
 def process_paragraphs(paragraphs, novel_id):
     chapter_word_count = 0
     novel_word_count = 0
-    current_chapter = False
 
     #initial chapter. This could be a prologue or something else
     current_chapter = Chapter.objects.create_chapter(novel_id, -1, 0, 'Prologue')
@@ -35,7 +34,6 @@ def process_paragraphs(paragraphs, novel_id):
         number, title = get_chapter(paragraph)
         if (number):
             #update previous chapter
-
             Chapter.objects.update_word_count(current_chapter.pk, chapter_word_count)
             #create new chapter
             current_chapter = Chapter.objects.create_chapter(novel_id, number, 0, title)
