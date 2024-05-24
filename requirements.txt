@@ -1,3 +1,6 @@
 elasticsearch
 Django
 django-elasticsearch-dsl
+djangorestframework
+markdown
+django-filter

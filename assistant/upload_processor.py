@@ -20,6 +20,8 @@ def handle_uploaded_file(title, file):
     process_paragraphs(data.splitlines(), novel.pk)
     file.close()
 
+    return novel.pk
+
 
 def process_paragraphs(paragraphs, novel_id):
     chapter_word_count = 0

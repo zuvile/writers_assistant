@@ -1,7 +1,13 @@
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import path, include
+from rest_framework import routers
+from assistant.views import UploadViewSet
+
+router = routers.DefaultRouter()
+router.register(r'upload', UploadViewSet, basename="upload")
 
 urlpatterns = [
-    path("assistant/", include("assistant.urls")),
     path("admin/", admin.site.urls),
+    path("assistant/", include("assistant.urls")),
+    path('api-auth/', include('rest_framework.urls')),
 ]
