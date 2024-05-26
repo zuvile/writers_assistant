@@ -3,7 +3,7 @@ from .upload_processor import handle_uploaded_file
 import codecs
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
-from .serializers import NovelSerializer, UploadSerializer, CharacterSerializer, CharacterPostSerializer
+from .serializers import NovelSerializer, UploadSerializer, CharacterSerializer, CharacterPostSerializer, CharacterPutSerializer
 from rest_framework.response import Response
 from rest_framework import status, serializers
 from rest_framework import permissions
@@ -42,21 +42,9 @@ class NovelDetailApiView(APIView):
         serializer = NovelSerializer(novel_instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def post(self, request, *args, **kwargs):
-        data = {
-            'name': request.data.get('name'),
-            'novels': request.data.get('novels')
-        }
-        serializer = CharacterPostSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response("success", status=status.HTTP_201_CREATED)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def put(self, request, character_id, *args, **kwargs):
-        character_instance = self.get_object(character_id)
-        if not character_instance:
+    def put(self, request, novel_id, *args, **kwargs):
+        novel_instance = self.get_object(novel_id)
+        if not novel_instance:
             return Response(
                 {"res": "Object with novel id does not exists"},
                 status=status.HTTP_400_BAD_REQUEST
@@ -64,7 +52,7 @@ class NovelDetailApiView(APIView):
         data = {
             'novel_name': request.data.get('novel_name'),
         }
-        serializer = NovelSerializer(instance=character_instance, data=data, partial=True)
+        serializer = NovelSerializer(instance=novel_instance, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -127,7 +115,6 @@ class CharacterListView(APIView):
 
 
     def post(self, request, *args, **kwargs):
-        logger = logging.getLogger('django')
         data = {
             'name': request.data.get('name'),
             'novels': request.data.get('novels')
@@ -160,31 +147,36 @@ class CharacterDetailApiView(APIView):
 
         serializer = CharacterSerializer(character_instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    #
-    # def put(self, character_id, request, *args, **kwargs):
-    #     if not novel_instance:
-    #         return Response(
-    #             {"res": "Object with novel id does not exists"},
-    #             status=status.HTTP_400_BAD_REQUEST
-    #         )
-    #     data = {
-    #         'novel_name': request.data.get('novel_name'),
-    #     }
-    #     serializer = NovelSerializer(instance=novel_instance, data=data, partial=True)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data, status=status.HTTP_200_OK)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    #
-    # def delete(self, request, novel_id, *args, **kwargs):
-    #     novel_instance = self.get_object(novel_id)
-    #     if not novel_instance:
-    #         return Response(
-    #             {"res": "Object with novel id does not exists"},
-    #             status=status.HTTP_400_BAD_REQUEST
-    #         )
-    #     novel_instance.delete()
-    #     return Response(
-    #         {"res": "Object deleted!"},
-    #         status=status.HTTP_200_OK
-    #     )
+
+    def put(self, request, character_id, *args, **kwargs):
+        character_instance = self.get_object(character_id)
+        if not character_instance:
+            return Response(
+                {"res": "Object with character id does not exists"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        data = {}
+
+        if request.data.get('novels') is not None:
+            data['novels'] = request.data.get('novels')
+        if request.data.get('novels') is not None:
+            data['name'] = request.data.get('name')
+
+        serializer = CharacterPutSerializer(instance=character_instance, data=data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, character_id, *args, **kwargs):
+        character_instance = self.get_object(character_id)
+        if not character_instance:
+            return Response(
+                {"res": "Object with novel id does not exists"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        character_instance.delete()
+        return Response(
+            {"res": "Object deleted!"},
+            status=status.HTTP_200_OK
+        )

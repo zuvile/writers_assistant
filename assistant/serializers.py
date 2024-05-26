@@ -31,7 +31,6 @@ class CharacterPostSerializer(Serializer):
             character.novels.add(novel)
         logging.error(character.novels)
 
-        character = Character.objects.prefetch_related('novels').get(pk=55)
         return character
 
 
@@ -43,7 +42,15 @@ class CharacterSerializer(serializers.ModelSerializer):
         fields = ["name", "novels"]
 
 
-# Serializers define the API representation.
+class CharacterPutSerializer(serializers.ModelSerializer):
+    novels = PrimaryKeyRelatedField(many=True, queryset=Novel.objects.all(), allow_null=True)
+    name = CharField(allow_null=True)
+
+    class Meta:
+        model = Character
+        fields = ["name", "novels"]
+
+
 class UploadSerializer(Serializer):
     novel_title = CharField()
     file_uploaded = FileField()
