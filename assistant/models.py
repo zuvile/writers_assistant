@@ -59,6 +59,12 @@ class ChapterManager(models.Manager):
         chapter.word_count = word_count
         chapter.save()
 
+class CharacterManager(models.Manager):
+    def update_character_name(self, character_id, name):
+        character = Character.objects.get(pk=character_id)
+        character.name = name
+        character.save()
+
 
 class Chapter(models.Model):
     novel = models.ForeignKey(Novel, on_delete=models.CASCADE)
@@ -78,3 +84,4 @@ class Paragraph(models.Model):
 class Character(models.Model):
     name = models.TextField(max_length=300)
     novels = models.ManyToManyField(Novel)
+    objects = CharacterManager()

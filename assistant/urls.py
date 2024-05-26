@@ -6,6 +6,8 @@ from .views import (
     NovelListApiView,
     NovelDetailApiView,
     UploadViewSet,
+    CharacterListView,
+    CharacterDetailApiView
 )
 
 app_name = "assistant"
@@ -15,5 +17,7 @@ router.register(r'api/novels/upload', UploadViewSet, basename="upload")
 urlpatterns = [
     path('', include(router.urls)),
     path('api/novels/', NovelListApiView.as_view()),
-    path('api/novels/<int:novel_id>/', NovelDetailApiView.as_view())
+    path('api/novels/<int:novel_id>/', NovelDetailApiView.as_view()),
+    path('api/novels/characters/', CharacterListView.as_view()),
+    path('api/novels/characters/<int:character_id>/', CharacterDetailApiView.as_view())
 ]
