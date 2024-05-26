@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from rest_framework.serializers import Serializer, FileField, CharField, IntegerField, ListField
+from rest_framework.serializers import Serializer, FileField, CharField, IntegerField, PrimaryKeyRelatedField
 from .models import Novel, Character
 import logging, json
 
@@ -15,8 +15,12 @@ class NovelIdSerializer(serializers.ModelSerializer):
 
 class CharacterPostSerializer(Serializer):
     name = CharField()
-    novels = ListField()
-    logging.error(novels)
+    novels = PrimaryKeyRelatedField(many=True, queryset=Novel.objects.all())
+
+    class Meta:
+        model = Character
+        fields = ["name", "novels"]
+
     def create(self, validated_data):
         logger = logging.getLogger('django')
         novels_data = validated_data.get('novels')
@@ -24,11 +28,10 @@ class CharacterPostSerializer(Serializer):
         character = Character.objects.create(name=validated_data.get('name'))
         character.save()
         for novel in novels_data:
-            logger.error("here")
-            character.novels.add(Novel.objects.get(id=novel['id']))
+            character.novels.add(novel)
+        logging.error(character.novels)
 
-        logger.error(character.novels)
-
+        character = Character.objects.prefetch_related('novels').get(pk=55)
         return character
 
 
