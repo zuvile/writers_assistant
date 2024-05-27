@@ -7,12 +7,14 @@ from .views import (
     NovelDetailApiView,
     UploadViewSet,
     CharacterListView,
-    CharacterDetailApiView
+    CharacterDetailApiView,
+    SearchViewSet
 )
 
 app_name = "assistant"
 router = routers.DefaultRouter()
 router.register(r'api/novels/upload', UploadViewSet, basename="upload")
+router.register(r'api/novels/search', SearchViewSet, basename="search")
 
 urlpatterns = [
     path('', include(router.urls)),

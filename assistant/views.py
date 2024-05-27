@@ -1,5 +1,6 @@
 from .models import Novel, Character
 from .upload_processor import handle_uploaded_file
+from .character_search import search
 import codecs
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
@@ -89,6 +90,19 @@ class UploadViewSet(ViewSet):
         else:
             return Response({"res": "Upload failed"}, status=status.HTTP_400_BAD_REQUEST)
 
+class SearchViewSet(ViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def create(self, request):
+        search_term = request.data['search_term']
+        decline = request.data['decline']
+        novels = request.data['novels']
+        results = search(search_term, novels, decline)
+        return Response(
+            {"res": results},
+            status=status.HTTP_200_OK
+        )
+
 
 class NovelListApiView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -98,7 +112,6 @@ class NovelListApiView(APIView):
         novels = Novel.objects.all()
         serializer = NovelSerializer(novels, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
 
 class CharacterListView(APIView):
     permission_classes = [permissions.IsAuthenticated]
