@@ -93,11 +93,10 @@ class UploadViewSet(ViewSet):
 class SearchViewSet(ViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
-    def create(self, request):
-        search_term = request.data['search_term']
-        decline = request.data['decline']
-        novels = request.data['novels']
-        results = search(search_term, novels, decline)
+    def list(self, request):
+        search_term = request.query_params.get('term', '')
+        novels = request.query_params.getlist('novels', '')
+        results = search(search_term, novels)
         return Response(
             {"res": results},
             status=status.HTTP_200_OK

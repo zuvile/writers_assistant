@@ -4,7 +4,7 @@ from .models import Novel
 from elasticsearch_dsl import Q
 
 
-def search(search_term, novels, do_decline):
+def search(search_term, novels):
     #todo filter by novel
     should = []
     s = ParagraphDocument.search().extra(size=3000)
