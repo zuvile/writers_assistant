@@ -4,8 +4,12 @@ PROLOGUE
 Some prologue text
 
 1. The beginning
-This is chapter one.
+This is chapter one, scene 1.
 – Hello, – she said.
+
+***
+
+This is scene 2.
 
 2. Second Chapter
 This is chapter two

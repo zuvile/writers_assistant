@@ -6,6 +6,7 @@ from .models import Author
 from .models import Novel
 from .models import Chapter
 from .models import Paragraph
+from .models import Scene
 
 
 class UploadProcessorTest(TestCase):
@@ -50,7 +51,7 @@ class UploadProcessorTest(TestCase):
         novel = Novel.objects.get(novel_name='Sample novel')
         process_paragraphs(self._paragraphs, novel.pk)
         chapter = Chapter.objects.get(title="The beginning")
-        self.assertEquals(7, chapter.word_count)
+        self.assertEquals(13, chapter.word_count)
 
     def test_get_real_word_count(self):
         paragraph = "– Hello, – he said."
@@ -60,7 +61,7 @@ class UploadProcessorTest(TestCase):
         novel = Novel.objects.get(novel_name='Sample novel')
         process_paragraphs(self._paragraphs, novel.pk)
         novel.refresh_from_db()
-        self.assertEquals(25, novel.word_count)
+        self.assertEquals(31, novel.word_count)
 
     def test_number_in_middle_sentence_not_chapter_title(self):
         paragraph = "Something 223. and other"
@@ -73,6 +74,8 @@ class UploadProcessorTest(TestCase):
         process_paragraphs(self._paragraphs, novel.pk)
         chapter = Chapter.objects.get(title="This is the last chapter")
         self.assertEquals(8, chapter.word_count)
+        scenes = Scene.objects.filter(chapter_id=chapter.pk)
+        self.assertEquals(1, len(scenes))
 
     def test_prologue(self):
         novel = Novel.objects.get(novel_name='Sample novel')
@@ -85,4 +88,11 @@ class UploadProcessorTest(TestCase):
         process_paragraphs(self._paragraphs, novel.pk)
         chapter = Chapter.objects.get(title="The beginning")
         paragraphs = Paragraph.objects.filter(chapter_id=chapter.pk)
-        self.assertEquals(2, len(paragraphs))
+        self.assertEquals(3, len(paragraphs))
+
+    def test_chapter_scenes(self):
+        novel = Novel.objects.get(novel_name='Sample novel')
+        process_paragraphs(self._paragraphs, novel.pk)
+        chapter = Chapter.objects.get(title="The beginning")
+        scenes = Scene.objects.filter(chapter_id=chapter.pk)
+        self.assertEquals(2, len(scenes))

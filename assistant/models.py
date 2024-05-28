@@ -40,9 +40,13 @@ class Novel(models.Model):
 
 
 class ParagraphManager(models.Manager):
-    def create_paragraph(self, is_dialogue, text, novel_id, chapter_id):
+    def create_paragraph(self, is_dialogue, text, novel_id, chapter_id, scene_id):
         novel = get_object_or_404(Novel, pk=novel_id)
-        paragraph = self.create(novel_id=novel.pk, is_dialogue=is_dialogue, text=text, chapter_id=chapter_id)
+        chapter = get_object_or_404(Chapter, pk=chapter_id)
+        scene = get_object_or_404(Scene, pk=scene_id)
+        paragraph = self.create(
+            novel_id=novel.pk, is_dialogue=is_dialogue,
+            text=text, chapter_id=chapter.pk, scene_id=scene.pk)
         return paragraph
 
 
@@ -59,11 +63,19 @@ class ChapterManager(models.Manager):
         chapter.word_count = word_count
         chapter.save()
 
+
 class CharacterManager(models.Manager):
-    def update_character_name(self, character_id, name):
-        character = Character.objects.get(pk=character_id)
-        character.name = name
-        character.save()
+    pass
+
+
+class SceneManager(models.Manager):
+    def create_scene(self, chapter_id, number):
+        chapter = get_object_or_404(Chapter, pk=chapter_id)
+        scene = self.create(chapter_id=chapter.pk, number=number)
+        print(scene)
+        scene.save()
+
+        return scene
 
 
 class Chapter(models.Model):
@@ -74,12 +86,22 @@ class Chapter(models.Model):
     objects = ChapterManager()
 
 
+class Scene(models.Model):
+    chapter = models.ForeignKey(Chapter,  on_delete=models.CASCADE)
+    number = models.IntegerField(default=1)
+    objects = SceneManager()
+    def __str__(self):
+        return 'scene: ' + str(self.number)
+
+
 class Paragraph(models.Model):
     is_dialogue = models.BooleanField(default=False)
     text = models.TextField(blank=True)
     novel = models.ForeignKey(Novel, on_delete=models.CASCADE)
     chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, null=True)
+    scene = models.ForeignKey(Scene, on_delete=models.CASCADE, null=True)
     objects = ParagraphManager()
+
 
 class Character(models.Model):
     name = models.TextField(max_length=300)
