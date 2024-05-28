@@ -52,6 +52,7 @@ class NovelDetailApiView(APIView):
             )
         data = {
             'novel_name': request.data.get('novel_name'),
+            'word_count': request.data.get('word_count'),
         }
         serializer = NovelSerializer(instance=novel_instance, data=data, partial=True)
         if serializer.is_valid():
@@ -59,14 +60,14 @@ class NovelDetailApiView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, character_id, *args, **kwargs):
-        character_instance = self.get_object(character_id)
-        if not character_instance:
+    def delete(self, request, novel_id, *args, **kwargs):
+        novel_instance = self.get_object(novel_id)
+        if not novel_instance:
             return Response(
                 {"res": "Object with novel id does not exists"},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        character_instance.delete()
+        novel_instance.delete()
         return Response(
             {"res": "Object deleted!"},
             status=status.HTTP_200_OK
@@ -171,7 +172,7 @@ class CharacterDetailApiView(APIView):
 
         if request.data.get('novels') is not None:
             data['novels'] = request.data.get('novels')
-        if request.data.get('novels') is not None:
+        if request.data.get('name') is not None:
             data['name'] = request.data.get('name')
 
         serializer = CharacterPutSerializer(instance=character_instance, data=data, partial=True)

@@ -19,7 +19,7 @@ class Author(models.Model):
 class NovelManager(models.Manager):
     def create_novel(self, title, author_id):
         author = get_object_or_404(Author, pk=author_id)
-        novel = self.create(novel_name=title, upload_date=timezone.now(), author_id=author.pk)
+        novel = self.create(novel_name=title, upload_date=timezone.now(), author_id=author.pk, word_count=0)
         return novel
 
     def update_word_count(self, novel_id, word_count):
@@ -72,7 +72,6 @@ class SceneManager(models.Manager):
     def create_scene(self, chapter_id, number):
         chapter = get_object_or_404(Chapter, pk=chapter_id)
         scene = self.create(chapter_id=chapter.pk, number=number)
-        print(scene)
         scene.save()
 
         return scene
