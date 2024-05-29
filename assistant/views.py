@@ -86,7 +86,7 @@ class UploadViewSet(ViewSet):
         if (novel_id != -1):
             return Response(
                 {"res": "File uploaded!"},
-                status=status.HTTP_200_OK
+                status=status.HTTP_201_CREATED
             )
         else:
             return Response({"res": "Upload failed"}, status=status.HTTP_400_BAD_REQUEST)
