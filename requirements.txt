@@ -4,3 +4,4 @@ django-elasticsearch-dsl
 djangorestframework
 markdown
 django-filter
+django-cors-headers
