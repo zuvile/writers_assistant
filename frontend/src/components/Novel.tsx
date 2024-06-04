@@ -5,6 +5,7 @@ import Info from "./Info";
 function Novel() {
   return (
     <div className="container">
+      <br></br>
       <div className="dropdown">
         <button
           className="btn btn-secondary dropdown-toggle"
@@ -14,6 +15,7 @@ function Novel() {
         >
           Novel Title
         </button>
+
         <ul className="dropdown-menu">
           <li>
             <a className="dropdown-item" href="#">
