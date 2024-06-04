@@ -7,6 +7,7 @@ import HomePage from "./components/HomePage";
 import { isLoggedIn } from "./auth";
 import LoginForm from "./components/LoginForm";
 import Logout from "./components/Logout";
+import CharacterList from "./components/CharacterList";
 
 function App() {
   const [selectedOption, setSelectedOption] = useState("Home");
@@ -41,6 +42,7 @@ function App() {
         <Bookshelf onEvaluate={onEvaluate}></Bookshelf>
       )}
       {selectedOption === "Evaluate" && <Novel></Novel>}
+      {selectedOption === "Characters" && <CharacterList></CharacterList>}
       {selectedOption === "Overview" && <Overview></Overview>}
       {selectedOption === "Logout" && <Logout></Logout>}
     </div>

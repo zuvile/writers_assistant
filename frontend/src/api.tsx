@@ -13,6 +13,29 @@ export interface FileUpload {
   file: File;
 }
 
+export interface Character {
+  id: number;
+  name: string;
+}
+
+export async function fetchCharacters() {
+  try {
+    const token = getToken();
+    const response = await axios.get(
+      "http://127.0.0.1:8000/assistant/api/novels/characters/",
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching novels:", error);
+    return [];
+  }
+}
+
 export async function fetchNovels() {
   const token = getToken();
   try {

@@ -5,7 +5,14 @@ interface Props {
   onSelectOption: (item: string) => void;
 }
 
-const navOptions = ["Home", "Bookshelf", "Overview", "Evaluate", "Logout"];
+const navOptions = [
+  "Home",
+  "Bookshelf",
+  "Overview",
+  "Characters",
+  "Evaluate",
+  "Logout",
+];
 
 const navOptionsLoggedOut = ["Home", "Login"];
 
