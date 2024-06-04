@@ -6,10 +6,9 @@ from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
 from .serializers import NovelSerializer, UploadSerializer, CharacterSerializer, CharacterPostSerializer, CharacterPutSerializer
 from rest_framework.response import Response
-from rest_framework import status, serializers
+from rest_framework import status
 from rest_framework import permissions
-from rest_framework.viewsets import ViewSet, ModelViewSet
-from rest_framework.authentication import TokenAuthentication
+from rest_framework.viewsets import ViewSet
 
 
 class NovelListApiView(APIView):

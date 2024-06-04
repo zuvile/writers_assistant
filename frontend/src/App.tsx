@@ -9,12 +9,14 @@ import LoginForm from "./components/LoginForm";
 import Logout from "./components/Logout";
 
 function App() {
-  let items = ["Chapter 1", "Chapter 2", "Chapter 3"];
-
   const [selectedOption, setSelectedOption] = useState("Home");
   const [loggedIn, setLoggedIn] = useState(false);
   const onSelectOption = (option: string) => {
     setSelectedOption(option);
+  };
+
+  const onEvaluate = (option: number) => {
+    setSelectedOption("Evaluate");
   };
 
   useEffect(() => {
@@ -35,7 +37,9 @@ function App() {
     <div>
       <NavBar onSelectOption={onSelectOption}></NavBar>
       {selectedOption === "Home" && <HomePage></HomePage>}
-      {selectedOption === "Bookshelf" && <Bookshelf></Bookshelf>}
+      {selectedOption === "Bookshelf" && (
+        <Bookshelf onEvaluate={onEvaluate}></Bookshelf>
+      )}
       {selectedOption === "Evaluate" && <Novel></Novel>}
       {selectedOption === "Overview" && <Overview></Overview>}
       {selectedOption === "Logout" && <Logout></Logout>}
