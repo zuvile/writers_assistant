@@ -54,6 +54,28 @@ export async function fetchNovels() {
   }
 }
 
+export async function createCharacter(name: string, novels: number[]) {
+  const token = getToken();
+  try {
+    const response = await axios.post(
+      "http://127.0.0.1:8000/assistant/api/novels/characters/",
+      {
+        name: name,
+        novels: novels,
+      },
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+          "Content-Type": "application/json",
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error creating character", error);
+    return [];
+  }
+}
 export async function uploadNovel({ title, file }: FileUpload) {
   const token = getToken();
   console.log(file, title);

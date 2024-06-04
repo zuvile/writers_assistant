@@ -6,7 +6,7 @@ interface Props {
 
 function Char({ character }: Props) {
   return (
-    <div className="card" style={{ width: "14rem" }}>
+    <div key={character.id} className="card" style={{ width: "14rem" }}>
       <img
         src="/default_profile_pic.jpg"
         className="object-fit-sm-contain"
