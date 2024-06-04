@@ -13,6 +13,10 @@ function Bookshelf({ onEvaluate }: Props) {
     fetchNovels().then(setNovels);
   }, []);
 
+  const onUpload = () => {
+    fetchNovels().then(setNovels);
+  };
+
   return (
     <div className="container-fluid">
       <div className="row">
@@ -27,11 +31,10 @@ function Bookshelf({ onEvaluate }: Props) {
               <div className="card-body">
                 <h5 className="card-title">{novel.novel_name}</h5>
                 <p className="card-text">
-                  <p>Word count: {novel.word_count.toLocaleString()}</p>
-                  <p>
-                    Uploaded at:{" "}
-                    {new Date(novel.upload_date).toLocaleDateString()}
-                  </p>
+                  Word count: {novel.word_count.toLocaleString()}
+                  <br></br>
+                  Uploaded at:
+                  {new Date(novel.upload_date).toLocaleDateString()}
                 </p>
                 <button
                   type="button"
@@ -49,9 +52,7 @@ function Bookshelf({ onEvaluate }: Props) {
             <i className="bi bi-plus"></i>
             <div className="card-body">
               <h5 className="card-title">Add new novel</h5>
-              <button type="button" className="btn btn-primary">
-                <UploadForm></UploadForm>
-              </button>
+              <UploadForm onUpload={onUpload}></UploadForm>
             </div>
           </div>
         </div>

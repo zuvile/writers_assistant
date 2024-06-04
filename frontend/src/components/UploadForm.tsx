@@ -2,21 +2,23 @@ import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { fetchNovels, uploadNovel } from "../api";
 import axios from "axios";
 
-const UploadForm: React.FC = () => {
+interface Props {
+  onUpload: () => void;
+}
+
+const UploadForm: React.FC<Props> = ({ onUpload }: Props) => {
   const [title, setTitle] = useState<string>("");
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string>("");
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    console.log(title, file);
 
     if (file) {
       try {
         const result = await uploadNovel({ title, file });
-        console.log(result);
+        onUpload();
       } catch (error) {
-        console.log(error);
         setError("Invalid title or file");
       }
     }
@@ -55,7 +57,11 @@ const UploadForm: React.FC = () => {
             onChange={handleFileChange}
           />
         </div>
-        <button type="submit" onClick={handleSubmit}>
+        <button
+          className="btn btn-primary"
+          type="submit"
+          onClick={handleSubmit}
+        >
           Submit
         </button>
       </form>

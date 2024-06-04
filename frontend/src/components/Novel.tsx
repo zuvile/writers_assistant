@@ -1,8 +1,10 @@
 import Chapter from "./Chapter";
 import Text from "./Text";
 import Info from "./Info";
+import { useState } from "react";
 
 function Novel() {
+  const [selectedNovel, setSelectedNovel] = useState();
   return (
     <div className="container">
       <br></br>
