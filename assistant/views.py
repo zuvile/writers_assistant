@@ -1,10 +1,11 @@
-from .models import Novel, Character
+from .models import Novel, Character, Chapter, Paragraph
 from .upload_processor import handle_uploaded_file
 from .character_search import search
 import codecs
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
-from .serializers import NovelSerializer, UploadSerializer, CharacterSerializer, CharacterPostSerializer, CharacterPutSerializer
+from .serializers import NovelSerializer, UploadSerializer, CharacterSerializer, CharacterPostSerializer, \
+    CharacterPutSerializer, ChapterSerializer, ParagraphSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import permissions
@@ -90,6 +91,7 @@ class UploadViewSet(ViewSet):
         else:
             return Response({"res": "Upload failed"}, status=status.HTTP_400_BAD_REQUEST)
 
+
 class SearchViewSet(ViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -112,6 +114,27 @@ class NovelListApiView(APIView):
         serializer = NovelSerializer(novels, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+
+class ChapterListView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = ChapterSerializer
+
+    def get(self, request, novel_id, *args, **kwargs):
+        queryset = Chapter.objects.prefetch_related('novel').filter(novel__id=novel_id)
+        serializer = ChapterSerializer(queryset, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class ParagraphListView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = ParagraphSerializer
+
+    def get(self, request, chapter_id, *args, **kwargs):
+        queryset = Paragraph.objects.prefetch_related('chapter').filter(chapter_id=chapter_id)
+        serializer = ParagraphSerializer(queryset, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 class CharacterListView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = CharacterSerializer
@@ -125,8 +148,7 @@ class CharacterListView(APIView):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args):
         data = {
             'name': request.data.get('name'),
             'novels': request.data.get('novels')

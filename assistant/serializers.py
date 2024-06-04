@@ -37,6 +37,15 @@ class CharacterSerializer(serializers.ModelSerializer):
         model = Character
         fields = ["name", "novels"]
 
+class ParagraphSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Paragraph
+        fields = ["text"]
+
+class ChapterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Chapter
+        fields = ["id", "number", "title"]
 
 class CharacterPutSerializer(serializers.ModelSerializer):
     novels = PrimaryKeyRelatedField(many=True, queryset=Novel.objects.all(), allow_null=True)

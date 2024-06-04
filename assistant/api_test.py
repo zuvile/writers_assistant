@@ -1,3 +1,4 @@
+import logging
 import os
 from .models import Author
 from .models import Novel
@@ -120,6 +121,20 @@ class ApiTest(APITestCase):
         character = Character.objects.get(name="Patrick2")
         self.assertIsNotNone(character)
 
+    def test_get_chapters(self):
+        response = self.client.get('/assistant/api/novels/' + str(self._novel_id) + '/chapters/')
+        self.assertEquals(status.HTTP_200_OK, response.status_code)
+        response_json = response.json()
+        self.assertEquals(response_json[1]['id'], 2)
+        self.assertEquals(response_json[1]['number'], 1)
+        self.assertEquals(response_json[1]['title'], 'The beginning')
+
+    def test_get_paragraphs(self):
+        response = self.client.get('/assistant/api/novels/' + str(self._novel_id) + '/chapters/2/paragraphs/')
+        self.assertEquals(status.HTTP_200_OK, response.status_code)
+        response_json = response.json()
+        self.assertEquals(response_json[0]['text'], 'This is chapter one, scene 1.')
+        self.assertEquals(response_json[1]['text'], '– Hello, – she said.')
 
     def test_upload_novel(self):
         file_content = b'''
