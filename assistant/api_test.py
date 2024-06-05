@@ -1,4 +1,3 @@
-import logging
 import os
 from .models import Author
 from .models import Novel
@@ -59,7 +58,6 @@ class ApiTest(APITestCase):
         response = self.client.delete('/assistant/api/novels/' + str(self._novel_id) + '/')
         self.assertEquals(status.HTTP_200_OK, response.status_code)
 
-
     def test_get_character_list(self):
         character = Character.objects.create(name="John")
         response = self.client.get('/assistant/api/novels/characters/')
@@ -88,7 +86,6 @@ class ApiTest(APITestCase):
         novel = Novel.objects.get(id=self._novel_id)
         self.assertEquals(novel, character.novels.get(pk=novel.pk))
 
-
     def test_delete_character(self):
         author = Author.objects.create_author('John Doe')
         novel = Novel.objects.create_novel('A New Novel', author.pk)
@@ -103,7 +100,6 @@ class ApiTest(APITestCase):
         self.assertEquals(200, response.status_code)
         with self.assertRaises(Character.DoesNotExist):
             Character.objects.get(pk=character.pk)
-
 
     def test_put_character(self):
         author = Author.objects.create_author('John Doe')
@@ -128,13 +124,27 @@ class ApiTest(APITestCase):
         self.assertEquals(response_json[1]['id'], 2)
         self.assertEquals(response_json[1]['number'], 1)
         self.assertEquals(response_json[1]['title'], 'The beginning')
+        self.assertEquals(response_json[1]['word_count'], 13)
 
-    def test_get_paragraphs(self):
-        response = self.client.get('/assistant/api/novels/' + str(self._novel_id) + '/chapters/2/paragraphs/')
+    def test_get_scenes(self):
+        response = self.client.get('/assistant/api/novels/' + str(self._novel_id) + '/chapters/1/scenes/')
         self.assertEquals(status.HTTP_200_OK, response.status_code)
         response_json = response.json()
-        self.assertEquals(response_json[0]['text'], 'This is chapter one, scene 1.')
-        self.assertEquals(response_json[1]['text'], '– Hello, – she said.')
+        self.assertEquals(response_json[0]['id'], 1)
+        self.assertEquals(response_json[0]['number'], 1)
+
+    def test_get_paragraphs(self):
+        chapter_id = Chapter.objects.get(novel_id=self._novel_id, title='The beginning').pk
+        response = self.client.get(
+            '/assistant/api/novels/' + str(
+                self._novel_id) + '/chapters/' + str(chapter_id) + '/scenes/3/paragraphs/')
+        self.assertEquals(status.HTTP_200_OK, response.status_code)
+        response_json = response.json()
+        self.assertEquals(response_json[0]['text'], 'This is scene 2.')
+
+    def test_get_paragraphs_on_invalid_scene(self):
+        response = self.client.get('/assistant/api/novels/' + str(self._novel_id) + '/chapters/1/scenes/3/paragraphs/')
+        self.assertEquals(status.HTTP_404_NOT_FOUND, response.status_code)
 
     def test_upload_novel(self):
         file_content = b'''
@@ -152,10 +162,8 @@ More text
             'novel_title': 'Test Novel',
             'file_uploaded': file
         }
-        # Send the post request
         response = self.client.post('/assistant/api/novels/upload/', data, format='multipart')
 
-        # Assert response status code
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         novel = Novel.objects.get(novel_name='Test Novel')
         self.assertIsNotNone(novel)
@@ -169,4 +177,3 @@ More text
         self.assertEquals(2, len(chapter1_scenes))
         chapter2_scenes = Scene.objects.filter(chapter_id=chapters[2].pk)
         self.assertEquals(1, len(chapter2_scenes))
-

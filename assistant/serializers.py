@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from rest_framework.serializers import Serializer, FileField, CharField, IntegerField, PrimaryKeyRelatedField, BooleanField
-from .models import Novel, Character, Paragraph, Chapter
-import logging, json
+from .models import Novel, Character, Paragraph, Chapter, Scene
 
 
 class NovelSerializer(serializers.ModelSerializer):
@@ -45,7 +44,12 @@ class ParagraphSerializer(serializers.ModelSerializer):
 class ChapterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chapter
-        fields = ["id", "number", "title"]
+        fields = ["id", "number", "title", "word_count"]
+
+class SceneSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Scene
+        fields = ["id", "number"]
 
 class CharacterPutSerializer(serializers.ModelSerializer):
     novels = PrimaryKeyRelatedField(many=True, queryset=Novel.objects.all(), allow_null=True)

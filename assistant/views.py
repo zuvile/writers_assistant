@@ -1,15 +1,16 @@
-from .models import Novel, Character, Chapter, Paragraph
+from .models import Novel, Character, Chapter, Paragraph, Scene
 from .upload_processor import handle_uploaded_file
 from .character_search import search
 import codecs
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
 from .serializers import NovelSerializer, UploadSerializer, CharacterSerializer, CharacterPostSerializer, \
-    CharacterPutSerializer, ChapterSerializer, ParagraphSerializer
+    CharacterPutSerializer, ChapterSerializer, ParagraphSerializer, SceneSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import permissions
 from rest_framework.viewsets import ViewSet
+from django.shortcuts import get_object_or_404
 
 
 class NovelListApiView(APIView):
@@ -125,12 +126,27 @@ class ChapterListView(APIView):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+class SceneListView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = SceneSerializer
+
+    def get(self, request, chapter_id, *args, **kwargs):
+        queryset = Scene.objects.prefetch_related('chapter').filter(chapter_id=chapter_id)
+        serializer = SceneSerializer(queryset, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 class ParagraphListView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = ParagraphSerializer
 
-    def get(self, request, chapter_id, *args, **kwargs):
-        queryset = Paragraph.objects.prefetch_related('chapter').filter(chapter_id=chapter_id)
+    def get(self, request, chapter_id, scene_id, *args, **kwargs):
+        try:
+            scene = Scene.objects.get(id=scene_id, chapter_id=chapter_id)
+        except Scene.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        queryset = Paragraph.objects.prefetch_related('scene').filter(scene_id=scene.pk)
         serializer = ParagraphSerializer(queryset, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
