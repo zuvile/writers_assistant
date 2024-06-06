@@ -1,6 +1,6 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { fetchNovels, uploadNovel } from "../api";
-import axios from "axios";
+import { Tooltip } from "react-tooltip";
 
 interface Props {
   onUpload: () => void;
@@ -56,6 +56,18 @@ const UploadForm: React.FC<Props> = ({ onUpload }: Props) => {
             id="formFile"
             onChange={handleFileChange}
           />
+        </div>
+        <div className="form-check">
+          <input
+            className="form-check-input"
+            type="checkbox"
+            value=""
+            id="flexCheckChecked"
+            checked
+          />
+          <label className="form-check-label" htmlFor="flexCheckChecked">
+            Generate AI content
+          </label>
         </div>
         <button
           className="btn btn-primary"

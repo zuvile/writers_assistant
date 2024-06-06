@@ -1,11 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Chapter as ChapterInterface,
-  Paragraph,
-  Scene,
-  fetchParagraphs,
-  fetchNovels,
-} from "../api";
+import { Paragraph, fetchParagraphs } from "../api";
 
 interface Props {
   novelId?: number;
@@ -33,7 +27,6 @@ function Text({ novelId, chapterId, sceneIds }: Props) {
           newParagraphArray.push(newParagraph);
         }
       }
-      // Sort paragraphs by id
       newParagraphArray.sort((a, b) => a.id - b.id);
       setParagraphs(newParagraphArray);
     };

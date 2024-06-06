@@ -100,6 +100,24 @@ export async function fetchParagraphs(
   }
 }
 
+export async function deleteNovel(novel_id: number) {
+  try {
+    const token = getToken();
+    const response = await axios.delete(
+      "http://127.0.0.1:8000/assistant/api/novels/" + novel_id + "/",
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting novel:", error);
+    return [];
+  }
+}
+
 export async function fetchScenes(novel_id: number, chapter_id: number) {
   try {
     const token = getToken();
