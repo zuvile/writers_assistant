@@ -1,6 +1,7 @@
-import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, FormEvent, CSSProperties, useState } from "react";
 import { fetchNovels, uploadNovel } from "../api";
-import { Tooltip } from "react-tooltip";
+import ClipLoader from "react-spinners/ClipLoader";
+import RingLoader from "react-spinners/RingLoader";
 
 interface Props {
   onUpload: () => void;
@@ -11,10 +12,10 @@ const UploadForm: React.FC<Props> = ({ onUpload }: Props) => {
   const [file, setFile] = useState<File | null>(null);
   const [genre, setGenre] = useState("");
   const [error, setError] = useState<string>("");
-
+  const [uploading, setUploading] = useState(false);
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-
+    setUploading(true);
     if (file) {
       try {
         const result = await uploadNovel({ title, genre, file });
@@ -30,12 +31,36 @@ const UploadForm: React.FC<Props> = ({ onUpload }: Props) => {
     (event: ChangeEvent<HTMLInputElement>) =>
       setState(event.target.value);
 
+  const override: CSSProperties = {
+    display: "block",
+    margin: "0 auto",
+    borderColor: "red",
+  };
+
   const handleFileChange = function (e: React.ChangeEvent<HTMLInputElement>) {
     const fileList = e.target.files;
     if (!fileList) return;
 
     setFile(fileList[0]);
   };
+
+  if (uploading) {
+    return (
+      <>
+        <span className="align-middle">
+          Uploading and generating content...
+        </span>
+        <RingLoader
+          color={"#2471A3"}
+          loading={uploading}
+          cssOverride={override}
+          size={150}
+          aria-label="Loading Spinner"
+          data-testid="loader"
+        />
+      </>
+    );
+  }
 
   return (
     <div className="container">
