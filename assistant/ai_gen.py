@@ -20,8 +20,7 @@ def get_portrait(age, description, novel_genre, gender):
                 "role": "assistant",
                 "content": "Please create a short description for image generation of a novel character:"
                + "age: " + str(age) + "description: " + description + " novel genre: " + novel_genre
-                + "gender: " + gender +
-                "Specify that the image should be a portrait of the character and it should contain no text. It should be in the style of a drawing."
+                + "gender: " + gender + "image only without typography, be in the style of drawings, and be visually appealing"
             }
         ],
     )
@@ -30,7 +29,7 @@ def get_portrait(age, description, novel_genre, gender):
 
     response = client.images.generate(
         model="dall-e-3",
-        prompt=description,
+        prompt=description + "graphite drawing",
         size="1024x1024",
         quality="standard",
         n=1,
