@@ -1,6 +1,5 @@
 import React, { ChangeEvent, FormEvent, CSSProperties, useState } from "react";
-import { fetchNovels, uploadNovel } from "../api";
-import ClipLoader from "react-spinners/ClipLoader";
+import { uploadNovel } from "../api";
 import RingLoader from "react-spinners/RingLoader";
 
 interface Props {

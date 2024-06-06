@@ -10,6 +10,7 @@ import {
 } from "../api";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
+import RingLoader from "react-spinners/RingLoader";
 
 function CharacterList() {
   const [characters, setCharacters] = useState<Character[]>([]);
@@ -21,6 +22,9 @@ function CharacterList() {
   const [newCharacterName, setNewCharacterName] = useState("");
   const [newCharacterAge, setNewCharacterAge] = useState(0);
   const [newCharacterDescription, setNewCharacterDescription] = useState("");
+  const [characterCreationInProgress, setCharacterCreationInProgress] =
+    useState(false);
+  const [newCharacterGender, setNewCharacterGender] = useState("");
 
   const handleOnNovelChange = (novelId: number) => {
     if (selectedNovelIds.includes(novelId)) {
@@ -30,17 +34,24 @@ function CharacterList() {
     }
   };
 
+  const onRegen = (id: number) => {
+    console.log("regen");
+    fetchCharacters().then(setCharacters);
+  };
+
   const handleSave = () => {
+    setCharacterCreationInProgress(true);
     createCharacter(
       newCharacterName,
       newCharacterAge,
       newCharacterDescription,
+      newCharacterGender,
       selectedNovelIds,
     ).then(() => {
       fetchCharacters().then(setCharacters);
+      setCharacterCreationInProgress(false);
+      handleClose();
     });
-
-    handleClose();
   };
 
   const onDelete = (id: number) => {
@@ -65,54 +76,73 @@ function CharacterList() {
     fetchNovels().then(setNovels);
   }, []);
 
+  let modalContents = <></>;
+  let modelFooter = <></>;
+
+  if (!characterCreationInProgress) {
+    modelFooter = (
+      <Modal.Footer>
+        <Button variant="primary" onClick={handleSave}>
+          Save Changes
+        </Button>
+      </Modal.Footer>
+    );
+  }
+  if (characterCreationInProgress) {
+    modalContents = <RingLoader></RingLoader>;
+  } else {
+    modalContents = (
+      <form>
+        <input
+          type="text"
+          className="form-control"
+          placeholder="Character name"
+          onChange={handleInputChange(setNewCharacterName)}
+        />
+        <input
+          type="number"
+          className="form-control"
+          placeholder="Character age"
+          onChange={handleNumberInputChange(setNewCharacterAge)}
+        />
+        <input
+          type="number"
+          className="form-control"
+          placeholder="Character gender"
+          onChange={handleInputChange(setNewCharacterGender)}
+        />
+        <input
+          type="text"
+          className="form-control"
+          placeholder="Character description"
+          onChange={handleInputChange(setNewCharacterDescription)}
+        />
+        <ul className="list-group">
+          <br></br>
+          {novels.map((novel) => (
+            <li className="list-group-item" key={novel.id}>
+              <input
+                className="form-check-input me-1"
+                type="checkbox"
+                value=""
+                aria-label="..."
+                onChange={() => handleOnNovelChange(novel.id)}
+              />
+              {novel.novel_name}
+            </li>
+          ))}
+        </ul>
+      </form>
+    );
+  }
   return (
     <>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Create new character</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          <form>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Character name"
-              onChange={handleInputChange(setNewCharacterName)}
-            />
-            <input
-              type="number"
-              className="form-control"
-              placeholder="Character age"
-              onChange={handleNumberInputChange(setNewCharacterAge)}
-            />
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Character description"
-              onChange={handleInputChange(setNewCharacterDescription)}
-            />
-            <ul className="list-group">
-              <br></br>
-              {novels.map((novel) => (
-                <li className="list-group-item" key={novel.id}>
-                  <input
-                    className="form-check-input me-1"
-                    type="checkbox"
-                    value=""
-                    aria-label="..."
-                    onChange={() => handleOnNovelChange(novel.id)}
-                  />
-                  {novel.novel_name}
-                </li>
-              ))}
-            </ul>
-          </form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="primary" onClick={handleSave}>
-            Save Changes
-          </Button>
-        </Modal.Footer>
+        <Modal.Body>{modalContents}</Modal.Body>
+        <Modal.Footer>{modelFooter}</Modal.Footer>
       </Modal>
       <div className="container">
         <h2>Characters</h2>
@@ -123,8 +153,10 @@ function CharacterList() {
         <div className="row">
           {characters.map((character) => (
             <CharacterProfile
+              key={character.id}
               character={character}
               onDelete={onDelete}
+              onRegen={onRegen}
             ></CharacterProfile>
           ))}
         </div>

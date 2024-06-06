@@ -5,3 +5,5 @@ djangorestframework
 markdown
 django-filter
 django-cors-headers
+openai
+python-dotenv

@@ -108,4 +108,12 @@ class Character(models.Model):
     novels = models.ManyToManyField(Novel)
     description = models.TextField(blank=True)
     age = models.IntegerField(default=0)
+    gender = models.TextField(blank=True)
     objects = CharacterManager()
+
+
+class Portrait(models.Model):
+    character = models.ForeignKey(Character, on_delete=models.CASCADE)
+    url = models.URLField(max_length=200)
+    objects = models.Manager()
+    active = models.BooleanField(default=True)

@@ -1,16 +1,17 @@
-from .models import Novel, Character, Chapter, Paragraph, Scene
+from .models import Novel, Character, Chapter, Paragraph, Scene, Portrait
 from .upload_processor import handle_uploaded_file
 from .character_search import search
 import codecs
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
 from .serializers import NovelSerializer, UploadSerializer, CharacterSerializer, CharacterPostSerializer, \
-    CharacterPutSerializer, ChapterSerializer, ParagraphSerializer, SceneSerializer
+    CharacterPutSerializer, ChapterSerializer, ParagraphSerializer, SceneSerializer, PortraitSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import permissions
 from rest_framework.viewsets import ViewSet
 from django.shortcuts import get_object_or_404
+from .portrait_creator import create_portrait
 
 
 class NovelListApiView(APIView):
@@ -167,13 +168,15 @@ class CharacterListView(APIView):
         data = {
             'name': request.data.get('name'),
             'age': request.data.get('age'),
+            'gender': request.data.get('gender'),
             'description': request.data.get('description'),
             'novels': request.data.get('novels')
         }
 
         serializer = CharacterPostSerializer(data=data)
         if serializer.is_valid():
-            serializer.save()
+            character = serializer.save()
+            create_portrait(character)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -231,3 +234,29 @@ class CharacterDetailApiView(APIView):
             {"res": "Object deleted!"},
             status=status.HTTP_200_OK
         )
+
+class PortraitListApiView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, character_id, *args, **kwargs):
+        character_instance = get_object_or_404(Character, pk=character_id)
+        portraits = Portrait.objects.filter(character_id=character_instance.pk)
+        serializer = PortraitSerializer(portraits, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, character_id, *args, **kwargs):
+        character = get_object_or_404(Character, pk=character_id)
+        previous_portraits = Portrait.objects.filter(character_id=character.pk).all()
+
+        for portrait in previous_portraits:
+            portrait.active = False
+            portrait.save()
+
+        portrait = create_portrait(character)
+        serializer = PortraitSerializer(portrait)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+

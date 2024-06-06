@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.serializers import Serializer, FileField, CharField, IntegerField, PrimaryKeyRelatedField, \
     BooleanField
-from .models import Novel, Character, Paragraph, Chapter, Scene
+from .models import Novel, Character, Paragraph, Chapter, Scene, Portrait
 
 
 class NovelSerializer(serializers.ModelSerializer):
@@ -23,7 +23,7 @@ class CharacterPostSerializer(Serializer):
 
     class Meta:
         model = Character
-        fields = ["name", "age", "description", "novels"]
+        fields = ["name", "age", "description", "gender", "novels"]
 
     def create(self, validated_data):
         novels_data = validated_data.get('novels')
@@ -42,8 +42,13 @@ class CharacterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Character
-        fields = ["id", "name", "age", "description", "novels"]
+        fields = ["id", "name", "age", "description", "gender", "novels"]
 
+
+class PortraitSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Portrait
+        fields = ["url", "active"]
 
 class ParagraphSerializer(serializers.ModelSerializer):
     class Meta:
