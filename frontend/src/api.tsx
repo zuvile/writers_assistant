@@ -1,5 +1,6 @@
 import { getToken } from "./auth";
 import axios from "axios";
+import chapter from "./components/Chapter";
 
 export interface Novel {
   id: number;
@@ -18,6 +19,23 @@ export interface Character {
   name: string;
 }
 
+export interface Paragraph {
+  id: number;
+  text: string;
+  is_dialogue: boolean;
+}
+
+export interface Chapter {
+  id: number;
+  title: string;
+  number: number;
+  word_count: number;
+}
+
+export interface Scene {
+  id: number;
+}
+
 export async function fetchCharacters() {
   try {
     const token = getToken();
@@ -32,6 +50,74 @@ export async function fetchCharacters() {
     return response.data;
   } catch (error) {
     console.error("Error fetching novels:", error);
+    return [];
+  }
+}
+
+export async function fetchChapters(novel_id: number) {
+  try {
+    const token = getToken();
+    const response = await axios.get(
+      "http://127.0.0.1:8000/assistant/api/novels/" + novel_id + "/chapters/",
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching chapters:", error);
+    return [];
+  }
+}
+
+export async function fetchParagraphs(
+  novel_id: number,
+  chapter_id: number,
+  scene_id: number,
+) {
+  try {
+    const token = getToken();
+    const response = await axios.get(
+      "http://127.0.0.1:8000/assistant/api/novels/" +
+        novel_id +
+        "/chapters/" +
+        chapter_id +
+        "/scenes/" +
+        scene_id +
+        "/paragraphs/",
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching paragraphs:", error);
+    return [];
+  }
+}
+
+export async function fetchScenes(novel_id: number, chapter_id: number) {
+  try {
+    const token = getToken();
+    const response = await axios.get(
+      "http://127.0.0.1:8000/assistant/api/novels/" +
+        novel_id +
+        "/chapters/" +
+        chapter_id +
+        "/scenes/",
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching scenes:", error);
     return [];
   }
 }
