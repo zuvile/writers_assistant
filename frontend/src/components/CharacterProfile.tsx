@@ -4,7 +4,7 @@ interface Props {
   character: Character;
 }
 
-function Char({ character }: Props) {
+function CharacterProfile({ character }: Props) {
   return (
     <div key={character.id} className="card" style={{ width: "14rem" }}>
       <img
@@ -15,12 +15,13 @@ function Char({ character }: Props) {
       <div className="card-body">
         <h5 className="card-title">{character.name}</h5>
         <p className="card-text">
-          <span>TODO other info</span>
+          Age: {character.age}
           <br></br>
+          Description: {character.description}
           <span></span>
         </p>
       </div>
     </div>
   );
 }
-export default Char;
+export default CharacterProfile;

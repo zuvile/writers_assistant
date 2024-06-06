@@ -5,18 +5,22 @@ import chapter from "./components/Chapter";
 export interface Novel {
   id: number;
   novel_name: string;
+  genre: string;
   word_count: number;
   upload_date: string;
 }
 
 export interface FileUpload {
   title: string;
+  genre: string;
   file: File;
 }
 
 export interface Character {
   id: number;
   name: string;
+  age: number;
+  description: string;
 }
 
 export interface Paragraph {
@@ -158,13 +162,20 @@ export async function fetchNovels() {
   }
 }
 
-export async function createCharacter(name: string, novels: number[]) {
+export async function createCharacter(
+  name: string,
+  age: number,
+  description: string,
+  novels: number[],
+) {
   const token = getToken();
   try {
     const response = await axios.post(
       "http://127.0.0.1:8000/assistant/api/novels/characters/",
       {
         name: name,
+        age: age,
+        description: description,
         novels: novels,
       },
       {
@@ -180,7 +191,7 @@ export async function createCharacter(name: string, novels: number[]) {
     return [];
   }
 }
-export async function uploadNovel({ title, file }: FileUpload) {
+export async function uploadNovel({ title, genre, file }: FileUpload) {
   const token = getToken();
   console.log(file, title);
   try {
@@ -189,6 +200,7 @@ export async function uploadNovel({ title, file }: FileUpload) {
       {
         file_uploaded: file,
         novel_title: title,
+        genre: genre,
       },
       {
         headers: {

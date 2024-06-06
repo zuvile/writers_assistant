@@ -3,8 +3,8 @@ from django_elasticsearch_dsl.registries import registry
 from .models import Paragraph, Novel, Chapter
 from django.db import models
 
-
-@registry.register_document
+#
+# @registry.register_document
 class ParagraphDocument(Document):
     novel = fields.ObjectField(properties={
         'novel_name': fields.TextField(),

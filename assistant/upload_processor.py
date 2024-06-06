@@ -7,7 +7,7 @@ import re
 _exclude_from_wordcount = ['–', '?', ',', '***']
 
 
-def handle_uploaded_file(title, file):
+def handle_uploaded_file(title, genre, file):
     # todo change
     author_id = 1
 
@@ -16,7 +16,7 @@ def handle_uploaded_file(title, file):
     if (content_type != 'text/plain'):
         return -1
 
-    novel = Novel.objects.create_novel(title, author_id)
+    novel = Novel.objects.create_novel(title, genre, author_id)
     data = file.read().decode("utf-8")
     process_paragraphs(data.splitlines(), novel.pk)
     file.close()

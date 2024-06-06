@@ -9,6 +9,7 @@ interface Props {
 const UploadForm: React.FC<Props> = ({ onUpload }: Props) => {
   const [title, setTitle] = useState<string>("");
   const [file, setFile] = useState<File | null>(null);
+  const [genre, setGenre] = useState("");
   const [error, setError] = useState<string>("");
 
   const handleSubmit = async (event: FormEvent) => {
@@ -16,7 +17,7 @@ const UploadForm: React.FC<Props> = ({ onUpload }: Props) => {
 
     if (file) {
       try {
-        const result = await uploadNovel({ title, file });
+        const result = await uploadNovel({ title, genre, file });
         onUpload();
       } catch (error) {
         setError("Invalid title or file");
@@ -47,6 +48,15 @@ const UploadForm: React.FC<Props> = ({ onUpload }: Props) => {
             id="novel title"
             placeholder="Novel title"
             onChange={handleInputChange(setTitle)}
+          />
+        </div>
+        <div className="mb-3">
+          <input
+            type="text"
+            className="form-control"
+            id="genre"
+            placeholder="Novel genre"
+            onChange={handleInputChange(setGenre)}
           />
         </div>
         <div className="mb-3">

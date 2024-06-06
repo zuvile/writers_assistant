@@ -24,7 +24,6 @@ class NovelListApiView(APIView):
 
 
 class NovelDetailApiView(APIView):
-    # add permission to check if user is authenticated
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self, novel_id):
@@ -83,7 +82,7 @@ class UploadViewSet(ViewSet):
 
     def create(self, request):
         utf8_file = codecs.EncodedFile(request.FILES['file_uploaded'], "utf-8")
-        novel_id = handle_uploaded_file(request.data['novel_title'], utf8_file)
+        novel_id = handle_uploaded_file(request.data['novel_title'], request.data['genre'], utf8_file)
         if (novel_id != -1):
             return Response(
                 {"res": "File uploaded!"},
@@ -167,6 +166,8 @@ class CharacterListView(APIView):
     def post(self, request, *args):
         data = {
             'name': request.data.get('name'),
+            'age': request.data.get('age'),
+            'description': request.data.get('description'),
             'novels': request.data.get('novels')
         }
 

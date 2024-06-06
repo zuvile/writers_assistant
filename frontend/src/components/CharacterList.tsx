@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { fetchCharacters } from "../api";
-import Char from "./Char";
+import CharacterProfile from "./CharacterProfile";
 import { Character, fetchNovels, Novel, createCharacter } from "../api";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
@@ -13,6 +13,8 @@ function CharacterList() {
   const [novels, setNovels] = useState<Novel[]>([]);
   const [selectedNovelIds, setSelectedNovelIds] = useState<number[]>([]);
   const [newCharacterName, setNewCharacterName] = useState("");
+  const [newCharacterAge, setNewCharacterAge] = useState(0);
+  const [newCharacterDescription, setNewCharacterDescription] = useState("");
 
   const handleOnNovelChange = (novelId: number) => {
     if (selectedNovelIds.includes(novelId)) {
@@ -23,7 +25,12 @@ function CharacterList() {
   };
 
   const handleSave = () => {
-    createCharacter(newCharacterName, selectedNovelIds).then(() => {
+    createCharacter(
+      newCharacterName,
+      newCharacterAge,
+      newCharacterDescription,
+      selectedNovelIds,
+    ).then(() => {
       fetchCharacters().then(setCharacters);
     });
 
@@ -34,6 +41,12 @@ function CharacterList() {
     (setState: React.Dispatch<React.SetStateAction<string>>) =>
     (event: ChangeEvent<HTMLInputElement>) =>
       setState(event.target.value);
+
+  const handleNumberInputChange =
+    (setState: React.Dispatch<React.SetStateAction<number>>) =>
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setState(Number(event.target.value));
+    };
 
   useEffect(() => {
     fetchCharacters().then(setCharacters);
@@ -53,6 +66,18 @@ function CharacterList() {
               className="form-control"
               placeholder="Character name"
               onChange={handleInputChange(setNewCharacterName)}
+            />
+            <input
+              type="number"
+              className="form-control"
+              placeholder="Character age"
+              onChange={handleNumberInputChange(setNewCharacterAge)}
+            />
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Character description"
+              onChange={handleInputChange(setNewCharacterDescription)}
             />
             <ul className="list-group">
               <br></br>
@@ -85,7 +110,7 @@ function CharacterList() {
         <hr></hr>
         <div className="row">
           {characters.map((character) => (
-            <Char character={character}></Char>
+            <CharacterProfile character={character}></CharacterProfile>
           ))}
         </div>
       </div>

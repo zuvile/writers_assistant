@@ -17,9 +17,9 @@ class Author(models.Model):
         return self.name
 
 class NovelManager(models.Manager):
-    def create_novel(self, title, author_id):
+    def create_novel(self, title, genre, author_id):
         author = get_object_or_404(Author, pk=author_id)
-        novel = self.create(novel_name=title, upload_date=timezone.now(), author_id=author.pk, word_count=0)
+        novel = self.create(novel_name=title, upload_date=timezone.now(), author_id=author.pk, word_count=0, genre=genre)
         return novel
 
     def update_word_count(self, novel_id, word_count):
@@ -33,6 +33,7 @@ class Novel(models.Model):
     upload_date = models.DateTimeField("date uploaded")
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     word_count = models.IntegerField(default=0)
+    genre = models.TextField(blank=True)
     objects = NovelManager()
 
     def __str__(self):
@@ -105,4 +106,6 @@ class Paragraph(models.Model):
 class Character(models.Model):
     name = models.TextField(max_length=300)
     novels = models.ManyToManyField(Novel)
+    description = models.TextField(blank=True)
+    age = models.IntegerField(default=0)
     objects = CharacterManager()

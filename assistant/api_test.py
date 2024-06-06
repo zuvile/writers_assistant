@@ -23,7 +23,7 @@ class ApiTest(APITestCase):
         data = f.read()
         paragraphs = data.splitlines()
         author = Author.objects.create_author('John Doe')
-        novel = Novel.objects.create_novel('A New Novel', author.pk)
+        novel = Novel.objects.create_novel('A New Novel', 'Fantasy', author.pk)
         self._novel_id = novel.pk
         process_paragraphs(paragraphs, novel.pk)
 
@@ -34,6 +34,7 @@ class ApiTest(APITestCase):
         self.assertEquals(response_json['id'], 1)
         self.assertEquals(response_json['novel_name'], 'A New Novel')
         self.assertEquals(response_json['word_count'], 31)
+        self.assertEquals(response_json['genre'], 'Fantasy')
 
     def test_get_novel_list(self):
         response = self.client.get('/assistant/api/novels/')
@@ -75,12 +76,16 @@ class ApiTest(APITestCase):
     def test_post_character(self):
         response = self.client.post('/assistant/api/novels/characters/', json.dumps({
             "name": "James",
-            "novels": [self._novel_id]
+            "novels": [self._novel_id],
+            "age": 25,
+            "description": "Blond hair and brown eyes"
         }), content_type='application/json')
         self.assertEquals(status.HTTP_201_CREATED, response.status_code)
         response_json = response.json()
         self.assertEquals(response_json['name'], 'James')
         self.assertEquals(response_json['novels'], [self._novel_id])
+        self.assertEquals(response_json['age'], 25)
+        self.assertEquals(response_json['description'], "Blond hair and brown eyes")
         character = Character.objects.get(name='James')
         self.assertIsNotNone(character)
         novel = Novel.objects.get(id=self._novel_id)
@@ -88,9 +93,11 @@ class ApiTest(APITestCase):
 
     def test_delete_character(self):
         author = Author.objects.create_author('John Doe')
-        novel = Novel.objects.create_novel('A New Novel', author.pk)
+        novel = Novel.objects.create_novel('A New Novel', 'Fantasy', author.pk)
         response = self.client.post('/assistant/api/novels/characters/', json.dumps({
             "name": "Patrick",
+            "age": 25,
+            "description": "Tall",
             "novels": [novel.pk]
         }), content_type='application/json')
         self.assertEquals(status.HTTP_201_CREATED, response.status_code)
@@ -103,10 +110,12 @@ class ApiTest(APITestCase):
 
     def test_put_character(self):
         author = Author.objects.create_author('John Doe')
-        novel = Novel.objects.create_novel('A New Novel', author.pk)
+        novel = Novel.objects.create_novel('A New Novel', 'Fantasy', author.pk)
         response = self.client.post('/assistant/api/novels/characters/', json.dumps({
             "name": "Patrick",
-            "novels": [novel.pk]
+            "novels": [novel.pk],
+            "age": 20,
+            "description": "Short"
         }), content_type='application/json')
         self.assertEquals(status.HTTP_201_CREATED, response.status_code)
         character = Character.objects.get(name="Patrick")
@@ -160,6 +169,7 @@ More text
         file = SimpleUploadedFile('test_novel.txt', file_content, content_type='text/plain')
         data = {
             'novel_title': 'Test Novel',
+            'genre': 'Fantasy',
             'file_uploaded': file
         }
         response = self.client.post('/assistant/api/novels/upload/', data, format='multipart')
