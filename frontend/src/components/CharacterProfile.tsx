@@ -1,10 +1,12 @@
 import { Character } from "../api";
+import React from "react";
 
 interface Props {
   character: Character;
+  onDelete: (id: number) => void;
 }
 
-function CharacterProfile({ character }: Props) {
+function CharacterProfile({ character, onDelete }: Props) {
   return (
     <div key={character.id} className="card" style={{ width: "14rem" }}>
       <img
@@ -20,8 +22,18 @@ function CharacterProfile({ character }: Props) {
           Description: {character.description}
           <span></span>
         </p>
+        <button
+          type="button"
+          className="btn btn-danger"
+          onClick={() => {
+            onDelete(character.id);
+          }}
+        >
+          Delete
+        </button>
       </div>
     </div>
   );
 }
+
 export default CharacterProfile;

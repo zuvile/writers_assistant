@@ -215,3 +215,23 @@ export async function uploadNovel({ title, genre, file }: FileUpload) {
     return [];
   }
 }
+
+export async function deleteCharacter(character_id: number) {
+  try {
+    const token = getToken();
+    const response = await axios.delete(
+      "http://127.0.0.1:8000/assistant/api/novels/characters/" +
+        character_id +
+        "/",
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting novel:", error);
+    return [];
+  }
+}

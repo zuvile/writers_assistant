@@ -42,7 +42,7 @@ class CharacterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Character
-        fields = ["name", "age", "description", "novels"]
+        fields = ["id", "name", "age", "description", "novels"]
 
 
 class ParagraphSerializer(serializers.ModelSerializer):

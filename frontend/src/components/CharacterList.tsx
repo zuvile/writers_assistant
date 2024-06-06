@@ -1,7 +1,13 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { fetchCharacters } from "../api";
 import CharacterProfile from "./CharacterProfile";
-import { Character, fetchNovels, Novel, createCharacter } from "../api";
+import {
+  Character,
+  fetchNovels,
+  Novel,
+  createCharacter,
+  deleteCharacter,
+} from "../api";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 
@@ -35,6 +41,12 @@ function CharacterList() {
     });
 
     handleClose();
+  };
+
+  const onDelete = (id: number) => {
+    deleteCharacter(id).then(() => {
+      fetchCharacters().then(setCharacters);
+    });
   };
 
   const handleInputChange =
@@ -110,7 +122,10 @@ function CharacterList() {
         <hr></hr>
         <div className="row">
           {characters.map((character) => (
-            <CharacterProfile character={character}></CharacterProfile>
+            <CharacterProfile
+              character={character}
+              onDelete={onDelete}
+            ></CharacterProfile>
           ))}
         </div>
       </div>
