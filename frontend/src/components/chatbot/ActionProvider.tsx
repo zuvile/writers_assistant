@@ -1,3 +1,5 @@
+import { fetchChatResponse } from "../../api";
+
 class ActionProvider {
   createChatBotMessage: any;
   setState: any;
@@ -9,9 +11,21 @@ class ActionProvider {
 
   greet() {
     const greetingMessage = this.createChatBotMessage(
-      "Hello, how can I help you?",
+      "I am your beta reader. I am here to help you with your writing. How can I help you today?",
     );
     this.updateChatbotState(greetingMessage);
+  }
+
+  async chat(message: string) {
+    try {
+      const response = await fetchChatResponse(message);
+      if (message) {
+        const responseMessage = this.createChatBotMessage(response);
+        this.updateChatbotState(responseMessage);
+      }
+    } catch (error) {
+      console.error("Error in fetchChatResponse:", error);
+    }
   }
 
   updateChatbotState(message: any) {

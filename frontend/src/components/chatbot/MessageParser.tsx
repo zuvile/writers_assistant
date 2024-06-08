@@ -12,6 +12,8 @@ class MessageParser {
 
     if (lowerCaseMessage.includes("hello")) {
       this.actionProvider.greet();
+    } else {
+      this.actionProvider.chat(message);
     }
   }
 }

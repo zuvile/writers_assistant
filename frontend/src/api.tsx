@@ -241,6 +241,27 @@ export async function regenCharacterPortrait(character_id: number) {
   }
 }
 
+export async function fetchChatResponse(message: string) {
+  try {
+    const token = getToken();
+    const response = await axios.post(
+      "http://127.0.0.1:8000/assistant/api/novels/chat/",
+      {
+        message: message,
+      },
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      },
+    );
+    return response.data["response"];
+  } catch (error) {
+    console.error("Error fetching chapters:", error);
+    return [];
+  }
+}
+
 export async function deleteCharacter(character_id: number) {
   try {
     const token = getToken();

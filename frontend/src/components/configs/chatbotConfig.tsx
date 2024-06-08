@@ -2,7 +2,9 @@
 import { createChatBotMessage } from "react-chatbot-kit";
 
 const config = {
-  initialMessages: [createChatBotMessage(`Hello world`, {})],
+  initialMessages: [
+    createChatBotMessage(`I am your beta reader. Ask me anything`, {}),
+  ],
 };
 
 export default config;

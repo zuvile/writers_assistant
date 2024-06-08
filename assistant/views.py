@@ -281,6 +281,7 @@ class ChatApiView(APIView):
 
     def post(self, request, *args, **kwargs):
         response = ChatApp().chat(request.data['message'])
-        return Response(response, status=status.HTTP_200_OK)
-
-
+        return Response(
+            {"response": response},
+            status=status.HTTP_200_OK
+        )
