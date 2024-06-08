@@ -2,6 +2,10 @@ import logging
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
+import requests
+import random
+import string
+
 
 load_dotenv()
 
@@ -25,7 +29,7 @@ def get_portrait(age, description, novel_genre, gender):
         ],
     )
     description = response.choices[0].message.content
-    logging.error(description)
+    logging.info(description)
 
     response = client.images.generate(
         model="dall-e-3",
@@ -34,8 +38,19 @@ def get_portrait(age, description, novel_genre, gender):
         quality="standard",
         n=1,
     )
+    return save_image_from_url(response.data[0].url)
 
-    return response.data[0].url
+
+def save_image_from_url(url):
+    response = requests.get(url)
+    file_name = generate_random_string(10) + ".jpg"
+    file_path = "assistant/static/" + file_name
+    with open(file_path, 'wb') as file:
+        file.write(response.content)
+    return file_name
 
 
-#print(get_portrait(20, "dark hair and blue eyes", "fantasy", "male"))
+def generate_random_string(length):
+    letters = string.ascii_letters
+    result_str = ''.join(random.choice(letters) for i in range(length))
+    return result_str

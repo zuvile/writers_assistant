@@ -1,5 +1,7 @@
 from django.urls import path, include
 from rest_framework import routers
+from django.conf import settings
+from django.conf.urls.static import static
 from .views import (
     NovelListApiView,
     NovelDetailApiView,
@@ -11,6 +13,7 @@ from .views import (
     ParagraphListView,
     SceneListView,
     PortraitListApiView,
+    CurrentPortraitApiView
 )
 
 app_name = "assistant"
@@ -27,5 +30,6 @@ urlpatterns = [
     path('api/novels/<int:novel_id>/chapters/<chapter_id>/scenes/<scene_id>/paragraphs/', ParagraphListView.as_view()),
     path('api/novels/characters/', CharacterListView.as_view()),
     path('api/novels/characters/<character_id>/portraits/', PortraitListApiView.as_view()),
+    path('api/novels/characters/<character_id>/current_portrait/', CurrentPortraitApiView.as_view()),
     path('api/novels/characters/<int:character_id>/', CharacterDetailApiView.as_view())
 ]

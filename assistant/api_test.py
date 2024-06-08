@@ -6,7 +6,7 @@ from .models import Paragraph
 from .models import Scene
 from .models import Chapter
 from django.contrib.auth.models import User
-from rest_framework.test import APIClient, APITestCase
+from rest_framework.test import APITestCase
 from .upload_processor import process_paragraphs
 import json
 from django.core.files.uploadedfile import SimpleUploadedFile

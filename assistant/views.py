@@ -1,3 +1,5 @@
+import logging
+
 from .models import Novel, Character, Chapter, Paragraph, Scene, Portrait
 from .upload_processor import handle_uploaded_file
 from .character_search import search
@@ -12,6 +14,9 @@ from rest_framework import permissions
 from rest_framework.viewsets import ViewSet
 from django.shortcuts import get_object_or_404
 from .portrait_creator import create_portrait
+from django.http import FileResponse
+from django.conf import settings
+import os
 
 
 class NovelListApiView(APIView):
@@ -235,16 +240,28 @@ class CharacterDetailApiView(APIView):
             status=status.HTTP_200_OK
         )
 
-class PortraitListApiView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
 
+class CurrentPortraitApiView(APIView):
+    #todo figure out authetication
+    permission_classes = [permissions.AllowAny]
+    #todo add test with static file
     def get(self, request, character_id, *args, **kwargs):
         character_instance = get_object_or_404(Character, pk=character_id)
-        portraits = Portrait.objects.filter(character_id=character_instance.pk)
-        serializer = PortraitSerializer(portraits, many=True)
+        portrait = Portrait.objects.filter(character_id=character_instance.pk, active=True).first()
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        if portrait:
+            image_path = os.path.join(settings.BASE_DIR, 'assistant', 'static', portrait.url)
+            logging.error(image_path)
+            if os.path.exists(image_path):
+                return FileResponse(open(image_path, 'rb'), content_type='image/jpeg')
+            else:
+                return Response({"error": "Image not found"}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response({"error": "Portrait not found for this character"}, status=status.HTTP_404_NOT_FOUND)
 
+
+class PortraitListApiView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
     def post(self, request, character_id, *args, **kwargs):
         character = get_object_or_404(Character, pk=character_id)
         previous_portraits = Portrait.objects.filter(character_id=character.pk).all()

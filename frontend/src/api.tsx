@@ -220,33 +220,6 @@ export async function uploadNovel({ title, genre, file }: FileUpload) {
   }
 }
 
-export async function fetchCharacterPortrait(character_id: number) {
-  try {
-    const token = getToken();
-    const response = await axios.get(
-      "http://127.0.0.1:8000/assistant/api/novels/characters/" +
-        character_id +
-        "/portraits/",
-      {
-        headers: {
-          Authorization: `Token ${token}`,
-        },
-      },
-    );
-
-    for (const element of response.data) {
-      if (element["active"]) {
-        return element["url"];
-      }
-    }
-    //todo better solution to this
-    return response.data[0]["url"];
-  } catch (error) {
-    console.error("Error fetching chapters:", error);
-    return [];
-  }
-}
-
 export async function regenCharacterPortrait(character_id: number) {
   try {
     const token = getToken();

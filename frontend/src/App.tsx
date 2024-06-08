@@ -6,6 +6,7 @@ import Overview from "./components/Overview";
 import HomePage from "./components/HomePage";
 import { isLoggedIn } from "./auth";
 import LoginForm from "./components/LoginForm";
+import Chat from "./components/Chat";
 import Logout from "./components/Logout";
 import CharacterList from "./components/CharacterList";
 
@@ -44,6 +45,7 @@ function App() {
       {selectedOption === "Evaluate" && <Novel></Novel>}
       {selectedOption === "Characters" && <CharacterList></CharacterList>}
       {selectedOption === "Overview" && <Overview></Overview>}
+      {selectedOption === "Chat" && <Chat></Chat>}
       {selectedOption === "Logout" && <Logout></Logout>}
     </div>
   );

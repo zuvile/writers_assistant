@@ -11,6 +11,7 @@ const navOptions = [
   "Overview",
   "Characters",
   "Evaluate",
+  "Chat",
   "Logout",
 ];
 

@@ -1,7 +1,8 @@
 import { Character } from "../api";
 import React, { useEffect, useState } from "react";
-import { fetchCharacterPortrait, regenCharacterPortrait } from "../api";
+import { regenCharacterPortrait } from "../api";
 import RingLoader from "react-spinners/RingLoader";
+import { BASE_URL } from "../config";
 
 interface Props {
   character: Character;
@@ -10,21 +11,24 @@ interface Props {
 }
 
 function CharacterProfile({ character, onDelete, onRegen }: Props) {
-  const [characterPortrait, setCharacterPortrait] = useState();
+  const [characterPortrait, setCharacterPortrait] = useState("");
   const [portraitLoading, setPortraitLoading] = useState(false);
 
   useEffect(() => {
-    fetchCharacterPortrait(character.id).then((url) => {
-      setCharacterPortrait(url);
-    });
+    fetchCharacterPortrait(character.id);
   }, []);
+
+  const fetchCharacterPortrait = (id: number) => {
+    // Add timestamp to url to prevent caching
+    const timestamp = new Date().getTime();
+    const url = `${BASE_URL}assistant/api/novels/characters/${id}/current_portrait/?${timestamp}`;
+    setCharacterPortrait(url);
+  };
 
   const onRegenerateImage = async (id: number) => {
     setPortraitLoading(true);
-    const url = await fetchCharacterPortrait(id);
     await regenCharacterPortrait(id);
-    const newUrl = await fetchCharacterPortrait(character.id);
-    setCharacterPortrait(newUrl);
+    fetchCharacterPortrait(character.id);
     onRegen(id);
     setPortraitLoading(false);
   };

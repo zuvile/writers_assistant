@@ -39,10 +39,11 @@ function Bookshelf({ onEvaluate }: Props) {
           <UploadForm onUpload={onUpload}></UploadForm>
         </Modal.Body>
       </Modal>
-      <div className="container-fluid">
+      <div className="container">
         <button type="button" className="btn btn-info" onClick={handleShow}>
           Add new novel
         </button>
+        <br></br>
         <div className="row">
           <div className="col d-flex justify-content-center">
             {novels.map((novel) => (
