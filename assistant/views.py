@@ -1,5 +1,6 @@
 import logging
 
+from .ai_chat import ChatApp
 from .models import Novel, Character, Chapter, Paragraph, Scene, Portrait
 from .upload_processor import handle_uploaded_file
 from .character_search import search
@@ -275,5 +276,11 @@ class PortraitListApiView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+class ChatApiView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        response = ChatApp().chat(request.data['message'])
+        return Response(response, status=status.HTTP_200_OK)
 
 

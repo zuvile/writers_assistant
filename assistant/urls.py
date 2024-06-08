@@ -13,7 +13,8 @@ from .views import (
     ParagraphListView,
     SceneListView,
     PortraitListApiView,
-    CurrentPortraitApiView
+    CurrentPortraitApiView,
+    ChatApiView
 )
 
 app_name = "assistant"
@@ -31,5 +32,6 @@ urlpatterns = [
     path('api/novels/characters/', CharacterListView.as_view()),
     path('api/novels/characters/<character_id>/portraits/', PortraitListApiView.as_view()),
     path('api/novels/characters/<character_id>/current_portrait/', CurrentPortraitApiView.as_view()),
-    path('api/novels/characters/<int:character_id>/', CharacterDetailApiView.as_view())
+    path('api/novels/characters/<int:character_id>/', CharacterDetailApiView.as_view()),
+    path('api/novels/chat/', ChatApiView.as_view()),
 ]
