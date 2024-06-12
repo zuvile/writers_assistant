@@ -24,6 +24,14 @@ export interface Character {
   description: string;
 }
 
+export interface PartialCharacter {
+  id: number;
+  name?: string;
+  age?: number;
+  gender?: string;
+  description?: string;
+}
+
 export interface Paragraph {
   id: number;
   text: string;
@@ -260,6 +268,39 @@ export async function fetchChatResponse(message: string) {
     return response.data["response"];
   } catch (error) {
     console.error("Error fetching chapters:", error);
+    return [];
+  }
+}
+
+export async function patchCharacter(character: PartialCharacter) {
+  let data: { [key: string]: string } = {};
+
+  if (character.name) {
+    data["name"] = character.name;
+  }
+  if (character.age) {
+    data["age"] = character.age.toString();
+  }
+  if (character.description) {
+    data["description"] = character.description;
+  }
+
+  try {
+    const token = getToken();
+    const response = await axios.patch(
+      "http://127.0.0.1:8000/assistant/api/novels/characters/" +
+        character.id +
+        "/",
+      data,
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting novel:", error);
     return [];
   }
 }

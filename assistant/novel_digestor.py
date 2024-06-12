@@ -18,14 +18,16 @@ class NovelDigestor:
             characters = ai_summarizer.get_characters(text)
             chapter.summary = summary
             for character in characters:
-                chapter.characters.add(self.upsert_character(character, novel_id))
+                chapter.characters.add(self.upsert_character(character, novel_id, text))
             chapter.save()
 
-    def upsert_character(self, character_name, novel_id):
+    def upsert_character(self, character_name, novel_id, text):
         character = Character.objects.filter(name=character_name).first()
-        # todo extract other qualities such as description, age, gender
+        ai_summarizer = AiSummarizer()
+        # todo extract other qualities such as age, gender
         if character is None:
-            character = Character.objects.create(name=character_name, age=20, description="", gender="unknown")
+            description = ai_summarizer.describe_character(character_name, text)
+            character = Character.objects.create(name=character_name, age=20, description=description, gender="unknown")
             character.save()
             portrait = Portrait.objects.create(character=character, url="default_profile.jpg", active=True)
             portrait.save()

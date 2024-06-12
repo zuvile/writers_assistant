@@ -1,8 +1,13 @@
 import { Character } from "../api";
 import React, { useEffect, useState } from "react";
-import { regenCharacterPortrait } from "../api";
+import {
+  regenCharacterPortrait,
+  patchCharacter,
+  PartialCharacter,
+} from "../api";
 import RingLoader from "react-spinners/RingLoader";
 import { BASE_URL } from "../config";
+import { InlineEdit, Input } from "rsuite";
 
 interface Props {
   character: Character;
@@ -13,6 +18,33 @@ interface Props {
 function CharacterProfile({ character, onDelete, onRegen }: Props) {
   const [characterPortrait, setCharacterPortrait] = useState("");
   const [portraitLoading, setPortraitLoading] = useState(false);
+
+  const onNameChange = (value: string) => {
+    let partialCharacter: PartialCharacter = {
+      id: character.id,
+      name: value,
+    };
+
+    patchCharacter(partialCharacter);
+  };
+
+  const onDescriptionChange = (value: string) => {
+    let partialCharacter: PartialCharacter = {
+      id: character.id,
+      description: value,
+    };
+
+    patchCharacter(partialCharacter);
+  };
+
+  const onAgeChange = (value: number) => {
+    let partialCharacter: PartialCharacter = {
+      id: character.id,
+      age: value,
+    };
+
+    patchCharacter(partialCharacter);
+  };
 
   useEffect(() => {
     fetchCharacterPortrait(character.id);
@@ -60,11 +92,18 @@ function CharacterProfile({ character, onDelete, onRegen }: Props) {
     <div key={character.id} className="card" style={{ width: "14rem" }}>
       {portrait}
       <div className="card-body">
-        <h5 className="card-title">{character.name}</h5>
+        <h5 className="card-title">
+          <InlineEdit defaultValue={character.name} onChange={onNameChange} />
+        </h5>
         <p className="card-text">
-          Age: {character.age}
+          <InlineEdit defaultValue={character.age} onChange={onAgeChange} />
           <br></br>
-          Description: {character.description}
+          <InlineEdit
+            defaultValue={character.description}
+            onChange={onDescriptionChange}
+          >
+            <Input as="textarea" rows={5} style={{ width: "100%" }} />
+          </InlineEdit>
           <span></span>
         </p>
         <div className="btn-group" role="group" aria-label="Basic example">

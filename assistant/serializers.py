@@ -73,13 +73,13 @@ class SceneSerializer(serializers.ModelSerializer):
         fields = ["id", "number"]
 
 
-class CharacterPutSerializer(serializers.ModelSerializer):
+class CharacterChangeSerializer(serializers.ModelSerializer):
     novels = PrimaryKeyRelatedField(many=True, queryset=Novel.objects.all(), allow_null=True)
     name = CharField(allow_null=True)
 
     class Meta:
         model = Character
-        fields = ["name", "novels"]
+        fields = ["name", "description", "age", "novels"]
 
 
 class UploadSerializer(Serializer):

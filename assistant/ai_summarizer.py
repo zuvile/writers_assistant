@@ -35,4 +35,21 @@ class AiSummarizer:
 
         chain = prompt | llm | list_output_parser
         characters = chain.invoke(input=text)
+
         return characters
+
+
+    def describe_character(self, character_name, text):
+        llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0.6)
+        output_parser = StrOutputParser()
+        prompt = ChatPromptTemplate.from_messages([
+            ("system", "You are a writer's assistant. Output only once setence describing a psychical appearance of a character."),
+            ("user",
+             " Describe the character's {character} physical appearance in once sentence based on the first chapter they appear in: {chapter}. Write only in english")
+        ])
+
+        chain = prompt | llm | output_parser
+        description = chain.invoke(input={"character": character_name, "chapter": text})
+
+        return description
+

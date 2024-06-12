@@ -7,7 +7,7 @@ import codecs
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
 from .serializers import NovelSerializer, UploadSerializer, CharacterSerializer, CharacterPostSerializer, \
-    CharacterPutSerializer, ChapterSerializer, ParagraphSerializer, SceneSerializer, PortraitSerializer
+    CharacterChangeSerializer, ChapterSerializer, ParagraphSerializer, SceneSerializer, PortraitSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import permissions
@@ -67,6 +67,7 @@ class NovelDetailApiView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, novel_id, *args, **kwargs):
+        #todo delete related chapters, scenes, paragraphs
         novel_instance = self.get_object(novel_id)
         if not novel_instance:
             return Response(
@@ -210,7 +211,31 @@ class CharacterDetailApiView(APIView):
         if request.data.get('name') is not None:
             data['name'] = request.data.get('name')
 
-        serializer = CharacterPutSerializer(instance=character_instance, data=data, partial=True)
+        serializer = CharacterChangeSerializer(instance=character_instance, data=data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def patch(self, request, character_id, *args, **kwargs):
+        character_instance = self.get_object(character_id)
+        if not character_instance:
+            return Response(
+                {"res": "Object with character id does not exists"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        data = {}
+
+        if request.data.get('name') is not None:
+            data['name'] = request.data.get('name')
+
+        if request.data.get('description') is not None:
+            data['description'] = request.data.get('description')
+
+        if request.data.get('age') is not None:
+            data['age'] = request.data.get('age')
+
+        serializer = CharacterChangeSerializer(instance=character_instance, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
