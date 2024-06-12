@@ -84,6 +84,8 @@ class Chapter(models.Model):
     word_count = models.IntegerField(default=0)
     title = models.TextField(blank=True)
     objects = ChapterManager()
+    summary = models.TextField(blank=True)
+    characters = models.ManyToManyField('Character')
 
 
 class Scene(models.Model):

@@ -35,6 +35,8 @@ export interface Chapter {
   title: string;
   number: number;
   word_count: number;
+  summary: string;
+  characters: Character[];
 }
 
 export interface Scene {

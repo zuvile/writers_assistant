@@ -9,6 +9,7 @@ import {
   fetchChapters,
   fetchScenes,
   Scene,
+  Character,
 } from "../api";
 import Dropdown from "react-bootstrap/Dropdown";
 
@@ -20,6 +21,9 @@ function Novel() {
   const [chapters, setChapters] = useState<ChapterInterface[]>([]);
   const [selectedChapterId, setSelectedChapterId] = useState(0);
   const [sceneIds, setSceneIds] = useState<number[]>([]);
+  const [currentChapter, setCurrentChapter] = useState<ChapterInterface | null>(
+    null,
+  );
 
   const onChapterSelect = async (chapterId: number | null) => {
     if (chapterId !== null) {
@@ -27,6 +31,11 @@ function Novel() {
       const newSceneIds = scenes.map((scene: Scene) => scene.id);
       setSceneIds(newSceneIds);
       setSelectedChapterId(chapterId);
+      chapters.forEach((chapter) => {
+        if (chapter.id === chapterId) {
+          setCurrentChapter(chapter);
+        }
+      });
     }
   };
 
@@ -44,6 +53,7 @@ function Novel() {
       }
     }
   };
+
   return (
     <div className="container">
       <br></br>
@@ -64,7 +74,7 @@ function Novel() {
       </Dropdown>
 
       <div className="row">
-        <div className="col min-vh-100">
+        <div className="col">
           <div className="d-flex flex-column vh-100 overflow-auto">
             <h1>Chapters</h1>
             {chapters.map((chapter) => (
@@ -89,8 +99,10 @@ function Novel() {
           </div>
         </div>
         <div className="col">
-          <h1>Info</h1>
-          <Info></Info>
+          <div className="d-flex flex-column vh-100 overflow-auto">
+            <h1>Info</h1>
+            <Info chapter={currentChapter}></Info>
+          </div>
         </div>
       </div>
     </div>

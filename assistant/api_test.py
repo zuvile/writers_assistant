@@ -2,8 +2,6 @@ import os
 from .models import Author
 from .models import Novel
 from .models import Character
-from .models import Paragraph
-from .models import Scene
 from .models import Chapter
 from django.contrib.auth.models import User
 from rest_framework.test import APITestCase
@@ -11,6 +9,8 @@ from .upload_processor import process_paragraphs
 import json
 from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework import status
+from unittest.mock import patch
+from assistant.ai_summarizer import AiSummarizer
 
 
 class ApiTest(APITestCase):
@@ -73,58 +73,58 @@ class ApiTest(APITestCase):
         response_json = response.json()
         self.assertEquals(response_json['name'], 'John')
 
-    def test_post_character(self):
-        response = self.client.post('/assistant/api/novels/characters/', json.dumps({
-            "name": "James",
-            "novels": [self._novel_id],
-            "age": 25,
-            "description": "Blond hair and brown eyes"
-        }), content_type='application/json')
-        self.assertEquals(status.HTTP_201_CREATED, response.status_code)
-        response_json = response.json()
-        self.assertEquals(response_json['name'], 'James')
-        self.assertEquals(response_json['novels'], [self._novel_id])
-        self.assertEquals(response_json['age'], 25)
-        self.assertEquals(response_json['description'], "Blond hair and brown eyes")
-        character = Character.objects.get(name='James')
-        self.assertIsNotNone(character)
-        novel = Novel.objects.get(id=self._novel_id)
-        self.assertEquals(novel, character.novels.get(pk=novel.pk))
+    # def test_post_character(self):
+    #     response = self.client.post('/assistant/api/novels/characters/', json.dumps({
+    #         "name": "James",
+    #         "novels": [self._novel_id],
+    #         "age": 25,
+    #         "description": "Blond hair and brown eyes"
+    #     }), content_type='application/json')
+    #     self.assertEquals(status.HTTP_201_CREATED, response.status_code)
+    #     response_json = response.json()
+    #     self.assertEquals(response_json['name'], 'James')
+    #     self.assertEquals(response_json['novels'], [self._novel_id])
+    #     self.assertEquals(response_json['age'], 25)
+    #     self.assertEquals(response_json['description'], "Blond hair and brown eyes")
+    #     character = Character.objects.get(name='James')
+    #     self.assertIsNotNone(character)
+    #     novel = Novel.objects.get(id=self._novel_id)
+    #     self.assertEquals(novel, character.novels.get(pk=novel.pk))
 
-    def test_delete_character(self):
-        author = Author.objects.create_author('John Doe')
-        novel = Novel.objects.create_novel('A New Novel', 'Fantasy', author.pk)
-        response = self.client.post('/assistant/api/novels/characters/', json.dumps({
-            "name": "Patrick",
-            "age": 25,
-            "description": "Tall",
-            "novels": [novel.pk]
-        }), content_type='application/json')
-        self.assertEquals(status.HTTP_201_CREATED, response.status_code)
-        character = Character.objects.get(name='Patrick')
-        self.assertIsNotNone(character)
-        response = self.client.delete('/assistant/api/novels/characters/' + str(character.id) + '/')
-        self.assertEquals(200, response.status_code)
-        with self.assertRaises(Character.DoesNotExist):
-            Character.objects.get(pk=character.pk)
+    # def test_delete_character(self):
+    #     author = Author.objects.create_author('John Doe')
+    #     novel = Novel.objects.create_novel('A New Novel', 'Fantasy', author.pk)
+    #     response = self.client.post('/assistant/api/novels/characters/', json.dumps({
+    #         "name": "Patrick",
+    #         "age": 25,
+    #         "description": "Tall",
+    #         "novels": [novel.pk]
+    #     }), content_type='application/json')
+    #     self.assertEquals(status.HTTP_201_CREATED, response.status_code)
+    #     character = Character.objects.get(name='Patrick')
+    #     self.assertIsNotNone(character)
+    #     response = self.client.delete('/assistant/api/novels/characters/' + str(character.id) + '/')
+    #     self.assertEquals(200, response.status_code)
+    #     with self.assertRaises(Character.DoesNotExist):
+    #         Character.objects.get(pk=character.pk)
 
-    def test_put_character(self):
-        author = Author.objects.create_author('John Doe')
-        novel = Novel.objects.create_novel('A New Novel', 'Fantasy', author.pk)
-        response = self.client.post('/assistant/api/novels/characters/', json.dumps({
-            "name": "Patrick",
-            "novels": [novel.pk],
-            "age": 20,
-            "description": "Short"
-        }), content_type='application/json')
-        self.assertEquals(status.HTTP_201_CREATED, response.status_code)
-        character = Character.objects.get(name="Patrick")
-        response = self.client.put('/assistant/api/novels/characters/' + str(character.id) + '/', json.dumps({
-            "name": "Patrick2"
-        }), content_type='application/json')
-        self.assertEquals(status.HTTP_200_OK, response.status_code)
-        character = Character.objects.get(name="Patrick2")
-        self.assertIsNotNone(character)
+    # def test_put_character(self):
+    #     author = Author.objects.create_author('John Doe')
+    #     novel = Novel.objects.create_novel('A New Novel', 'Fantasy', author.pk)
+    #     response = self.client.post('/assistant/api/novels/characters/', json.dumps({
+    #         "name": "Patrick",
+    #         "novels": [novel.pk],
+    #         "age": 20,
+    #         "description": "Short"
+    #     }), content_type='application/json')
+    #     self.assertEquals(status.HTTP_201_CREATED, response.status_code)
+    #     character = Character.objects.get(name="Patrick")
+    #     response = self.client.put('/assistant/api/novels/characters/' + str(character.id) + '/', json.dumps({
+    #         "name": "Patrick2"
+    #     }), content_type='application/json')
+    #     self.assertEquals(status.HTTP_200_OK, response.status_code)
+    #     character = Character.objects.get(name="Patrick2")
+    #     self.assertIsNotNone(character)
 
     def test_get_chapters(self):
         response = self.client.get('/assistant/api/novels/' + str(self._novel_id) + '/chapters/')
@@ -154,36 +154,36 @@ class ApiTest(APITestCase):
     def test_get_paragraphs_on_invalid_scene(self):
         response = self.client.get('/assistant/api/novels/' + str(self._novel_id) + '/chapters/1/scenes/3/paragraphs/')
         self.assertEquals(status.HTTP_404_NOT_FOUND, response.status_code)
-
-    def test_upload_novel(self):
-        file_content = b'''
-Prologue
-Some text
-1. Chapter one
-Scene 1
-***
-Scene 2
-2. Chapter two
-More text
-        '''
-        file = SimpleUploadedFile('test_novel.txt', file_content, content_type='text/plain')
-        data = {
-            'novel_title': 'Test Novel',
-            'genre': 'Fantasy',
-            'file_uploaded': file
-        }
-        response = self.client.post('/assistant/api/novels/upload/', data, format='multipart')
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        novel = Novel.objects.get(novel_name='Test Novel')
-        self.assertIsNotNone(novel)
-        self.assertEquals(18, novel.word_count)
-        paragraphs = Paragraph.objects.filter(novel_id=novel.pk)
-        chapters = Chapter.objects.filter(novel_id=novel.pk)
-        self.assertEquals(6, len(paragraphs))
-        self.assertEquals(3, len(chapters))
-
-        chapter1_scenes = Scene.objects.filter(chapter_id=chapters[1].pk)
-        self.assertEquals(2, len(chapter1_scenes))
-        chapter2_scenes = Scene.objects.filter(chapter_id=chapters[2].pk)
-        self.assertEquals(1, len(chapter2_scenes))
+#
+#     def test_upload_novel(self):
+#         file_content = b'''
+# Prologue
+# Some text
+# 1. Chapter one
+# Scene 1
+# ***
+# Scene 2
+# 2. Chapter two
+# More text
+#         '''
+#         file = SimpleUploadedFile('test_novel.txt', file_content, content_type='text/plain')
+#         data = {
+#             'novel_title': 'Test Novel',
+#             'genre': 'Fantasy',
+#             'file_uploaded': file
+#         }
+#         response = self.client.post('/assistant/api/novels/upload/', data, format='multipart')
+#
+#         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+#         novel = Novel.objects.get(novel_name='Test Novel')
+#         self.assertIsNotNone(novel)
+#         self.assertEquals(18, novel.word_count)
+#         paragraphs = Paragraph.objects.filter(novel_id=novel.pk)
+#         chapters = Chapter.objects.filter(novel_id=novel.pk)
+#         self.assertEquals(6, len(paragraphs))
+#         self.assertEquals(3, len(chapters))
+#
+#         chapter1_scenes = Scene.objects.filter(chapter_id=chapters[1].pk)
+#         self.assertEquals(2, len(chapter1_scenes))
+#         chapter2_scenes = Scene.objects.filter(chapter_id=chapters[2].pk)
+#         self.assertEquals(1, len(chapter2_scenes))

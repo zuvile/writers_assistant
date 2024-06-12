@@ -1,96 +1,72 @@
-import { useEffect, useState } from "react";
-import { Character, fetchCharacters } from "../api";
-import ChatbotComponent from "./ChatbotComponent";
-function Info() {
-  const [characters, setCharacters] = useState<Character[]>([]);
+import { Chapter as ChapterInterface } from "../api";
+import { useState } from "react";
 
-  useEffect(() => {
-    fetchCharacters().then(setCharacters);
-  }, []);
+interface Props {
+  chapter: ChapterInterface | null;
+}
 
-  const [statsOpen, setStatsOpen] = useState(false);
-  const [charactersOpen, setCharactersOpen] = useState(false);
+function Info({ chapter }: Props) {
+  const [summaryOpen, setSummaryOpen] = useState(false);
+
+  const onSummaryClick = () => {
+    setSummaryOpen(!summaryOpen);
+  };
+  if (chapter === null || chapter === undefined) {
+    return <div className="container">Select chapter</div>;
+  }
 
   return (
-    <>
-      <ChatbotComponent></ChatbotComponent>
+    <div className="container">
       <div className="accordion" id="accordionExample">
-        <br></br>
         <div className="accordion-item">
           <h2 className="accordion-header">
             <button
+              onClick={onSummaryClick}
               className={
-                charactersOpen
-                  ? "accordion-button"
-                  : "accordion-button collapsed"
+                summaryOpen ? "accordion-button" : "accordion-button collapsed"
               }
               type="button"
               data-bs-toggle="collapse"
               data-bs-target="#collapseOne"
-              aria-expanded="true"
+              aria-expanded={summaryOpen ? "true" : "false"}
               aria-controls="collapseOne"
-              onClick={() => setCharactersOpen(!charactersOpen)}
             >
-              Characters
+              Summary
             </button>
           </h2>
           <div
             id="collapseOne"
             className={
-              charactersOpen
+              summaryOpen
                 ? "accordion-collapse collapse show"
                 : "accordion-collapse collapse"
             }
             data-bs-parent="#accordionExample"
           >
             <div className="accordion-body">
-              <ul className="list-group">
-                {characters.map((character) => (
-                  <li className="list-group-item">
-                    {character.name}
-                    <img
-                      src="/default_profile_pic.jpg"
-                      className="rounded-circle"
-                      width={20}
-                      height={30}
-                      alt="img"
-                    />
-                  </li>
-                ))}
-              </ul>
+              <p>{chapter.summary}</p>
             </div>
           </div>
         </div>
-        <div className="accordion-item">
-          <h2 className="accordion-header">
-            <button
-              className={
-                statsOpen ? "accordion-button" : "accordion-button collapsed"
-              }
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#collapseTwo"
-              aria-expanded="false"
-              aria-controls="collapseTwo"
-              onClick={() => setStatsOpen(!statsOpen)}
-            >
-              Stats
-            </button>
-          </h2>
-          <div
-            id="collapseTwo"
-            className={
-              statsOpen
-                ? "accordion-collapse collapse show"
-                : "accordion-collapse collapse"
-            }
-            data-bs-parent="#accordionExample"
-          >
-            <div className="accordion-body">Word count: 1000</div>
-          </div>
-        </div>
       </div>
-    </>
+      <div className="container">
+        <p>
+          Word count:
+          <span className="badge bg-secondary"> {chapter.word_count} </span>
+        </p>
+        <h2>
+          <span className="badge bg-secondary">Characters</span>
+        </h2>
+
+        <ul className="list-group">
+          {chapter.characters.map((character) => (
+            <li className="list-group-item" key={character.id}>
+              {character.name}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
   );
 }
 

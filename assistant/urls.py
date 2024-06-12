@@ -1,14 +1,12 @@
 from django.urls import path, include
 from rest_framework import routers
-from django.conf import settings
-from django.conf.urls.static import static
+
 from .views import (
     NovelListApiView,
     NovelDetailApiView,
     UploadViewSet,
     CharacterListView,
     CharacterDetailApiView,
-    SearchViewSet,
     ChapterListView,
     ParagraphListView,
     SceneListView,
@@ -20,7 +18,6 @@ from .views import (
 app_name = "assistant"
 router = routers.DefaultRouter()
 router.register(r'api/novels/upload', UploadViewSet, basename="upload")
-router.register(r'api/novels/search', SearchViewSet, basename="search")
 
 urlpatterns = [
     path('', include(router.urls)),

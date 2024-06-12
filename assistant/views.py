@@ -2,8 +2,7 @@ import logging
 
 from .ai_chat import ChatApp
 from .models import Novel, Character, Chapter, Paragraph, Scene, Portrait
-from .upload_processor import handle_uploaded_file
-from .character_search import search
+from .novel_importer import NovelImporter
 import codecs
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
@@ -89,7 +88,8 @@ class UploadViewSet(ViewSet):
 
     def create(self, request):
         utf8_file = codecs.EncodedFile(request.FILES['file_uploaded'], "utf-8")
-        novel_id = handle_uploaded_file(request.data['novel_title'], request.data['genre'], utf8_file)
+        novel_importer = NovelImporter()
+        novel_id = novel_importer.import_novel(request.data['novel_title'], request.data['genre'], utf8_file)
         if (novel_id != -1):
             return Response(
                 {"res": "File uploaded!"},
@@ -97,19 +97,6 @@ class UploadViewSet(ViewSet):
             )
         else:
             return Response({"res": "Upload failed"}, status=status.HTTP_400_BAD_REQUEST)
-
-
-class SearchViewSet(ViewSet):
-    permission_classes = [permissions.IsAuthenticated]
-
-    def list(self, request):
-        search_term = request.query_params.get('term', '')
-        novels = request.query_params.getlist('novels', '')
-        results = search(search_term, novels)
-        return Response(
-            {"res": results},
-            status=status.HTTP_200_OK
-        )
 
 
 class NovelListApiView(APIView):
@@ -165,6 +152,7 @@ class CharacterListView(APIView):
         return Character.objects.all()
 
     def get(self, request, *args, **kwargs):
+        #todo filter by novel
         queryset = Character.objects.prefetch_related('novels').all()
         serializer = CharacterSerializer(queryset, many=True)
 

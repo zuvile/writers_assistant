@@ -44,6 +44,10 @@ class CharacterSerializer(serializers.ModelSerializer):
         model = Character
         fields = ["id", "name", "age", "description", "gender", "novels"]
 
+class CharacterBasicSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Character
+        fields = ["id", "name", "age", "description", "gender"]
 
 class PortraitSerializer(serializers.ModelSerializer):
     class Meta:
@@ -57,9 +61,10 @@ class ParagraphSerializer(serializers.ModelSerializer):
 
 
 class ChapterSerializer(serializers.ModelSerializer):
+    characters = CharacterBasicSerializer(read_only=True, many=True)
     class Meta:
         model = Chapter
-        fields = ["id", "number", "title", "word_count"]
+        fields = ["id", "number", "title", "word_count", "characters", "summary"]
 
 
 class SceneSerializer(serializers.ModelSerializer):

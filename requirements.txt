@@ -1,6 +1,4 @@
-elasticsearch
 Django
-django-elasticsearch-dsl
 djangorestframework
 markdown
 django-filter
@@ -10,3 +8,4 @@ python-dotenv
 langchain
 langchain_community
 langchain-openai
+pandas

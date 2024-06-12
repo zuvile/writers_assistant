@@ -34,7 +34,11 @@ function Text({ novelId, chapterId, sceneIds }: Props) {
   }, [novelId, chapterId, sceneIds]);
 
   if (paragraphs.length === 0) {
-    return <div>Such empty</div>;
+    return (
+      <div className="container">
+        <p>Select a novel and chapter to see it's text</p>
+      </div>
+    );
   }
 
   return (

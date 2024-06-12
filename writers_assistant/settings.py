@@ -45,9 +45,6 @@ INSTALLED_APPS = [
     'rest_framework.authtoken'
 ]
 
-if not TESTING:
-    INSTALLED_APPS.append('django_elasticsearch_dsl')
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -125,14 +122,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'writers_assistant.wsgi.application'
 
-if not TESTING:
-    ELASTICSEARCH_DSL={
-        'default': {
-            'hosts': ['http://es01:9200'],
-            'http_auth': ('elastic', 'password'),
-            'verify_certs': False,
-        }
-    }
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
