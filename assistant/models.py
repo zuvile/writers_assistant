@@ -28,6 +28,24 @@ class NovelManager(models.Manager):
         novel.save()
 
 
+    def delete_with_children(self, novel_id):
+        novel = Novel.objects.get(pk=novel_id)
+        chapters = Chapter.objects.filter(novel_id=novel_id)
+        characters = Character.objects.filter(novels__id=novel_id)
+        for character in characters:
+            character.novels.remove(novel)
+            if character.novels.count() == 0:
+                character.delete()
+        for chapter in chapters:
+            scenes = Scene.objects.filter(chapter_id=chapter.pk)
+            for scene in scenes:
+                paragraphs = Paragraph.objects.filter(scene_id=scene.pk)
+                paragraphs.delete()
+            scenes.delete()
+        chapters.delete()
+        novel.delete()
+
+
 class Novel(models.Model):
     novel_name = models.CharField(max_length=200)
     upload_date = models.DateTimeField("date uploaded")

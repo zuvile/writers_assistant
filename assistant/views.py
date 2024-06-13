@@ -74,7 +74,7 @@ class NovelDetailApiView(APIView):
                 {"res": "Object with novel id does not exists"},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        novel_instance.delete()
+        Novel.objects.delete_with_children(novel_instance.id)
         return Response(
             {"res": "Object deleted!"},
             status=status.HTTP_200_OK
