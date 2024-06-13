@@ -12,6 +12,7 @@ import {
   Character,
 } from "../api";
 import Dropdown from "react-bootstrap/Dropdown";
+import NovelSelect from "./NovelSelect";
 
 function Novel() {
   const [novels, setNovels] = useState<NovelInterface[]>([]);
@@ -57,22 +58,11 @@ function Novel() {
   return (
     <div className="container">
       <br></br>
-      <Dropdown onSelect={onNovelSelect}>
-        <Dropdown.Toggle variant="success" id="dropdown-basic">
-          {selectedNovel?.novel_name || "Select a novel"}
-        </Dropdown.Toggle>
-        <Dropdown.Menu>
-          {novels.map((novel) => (
-            <Dropdown.Item
-              eventKey={novel.id}
-              active={selectedNovel?.id === novel.id}
-            >
-              {novel.novel_name}
-            </Dropdown.Item>
-          ))}
-        </Dropdown.Menu>
-      </Dropdown>
-
+      <NovelSelect
+        onNovelSelect={onNovelSelect}
+        novels={novels}
+        selectedNovel={selectedNovel}
+      ></NovelSelect>
       <div className="row">
         <div className="col">
           <div className="d-flex flex-column vh-100 overflow-auto">
