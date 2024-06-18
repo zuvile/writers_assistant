@@ -3,7 +3,6 @@ import logging
 from .ai_chat import ChatApp
 from .models import Novel, Character, Chapter, Paragraph, Scene, Portrait
 from .novel_importer import NovelImporter
-import codecs
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
 from .serializers import NovelSerializer, UploadSerializer, CharacterSerializer, CharacterPostSerializer, \
@@ -88,9 +87,8 @@ class UploadViewSet(ViewSet):
     parser_classes = [MultiPartParser]
 
     def create(self, request):
-        utf8_file = codecs.EncodedFile(request.FILES['file_uploaded'], "utf-8")
         novel_importer = NovelImporter()
-        novel_id = novel_importer.import_novel(request.data['novel_title'], request.data['genre'], utf8_file)
+        novel_id = novel_importer.import_novel(request.data['novel_title'], request.data['genre'], request.FILES['file_uploaded'])
         if (novel_id != -1):
             return Response(
                 {"res": "File uploaded!"},
@@ -293,7 +291,8 @@ class ChatApiView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        response = ChatApp().chat(request.data['message'])
+        #todo change to novel_id
+        response = ChatApp(novel_id=33).chat(request.data['message'])
         return Response(
             {"response": response},
             status=status.HTTP_200_OK

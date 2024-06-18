@@ -72,7 +72,7 @@ function Overview() {
       {wordCountData && (
         <>
           <h2>Word count per chapter</h2>
-          <div className="bar" style={{ width: 400 }}>
+          <div className="bar" style={{ width: "100%" }}>
             <BarChart chartData={wordCountData} />
           </div>
         </>

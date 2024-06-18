@@ -91,18 +91,6 @@ const UploadForm: React.FC<Props> = ({ onUpload }: Props) => {
             onChange={handleFileChange}
           />
         </div>
-        <div className="form-check">
-          <input
-            className="form-check-input"
-            type="checkbox"
-            value=""
-            id="flexCheckChecked"
-            checked
-          />
-          <label className="form-check-label" htmlFor="flexCheckChecked">
-            Generate AI content
-          </label>
-        </div>
         <button
           className="btn btn-primary"
           type="submit"
